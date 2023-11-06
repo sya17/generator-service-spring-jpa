@@ -26,18 +26,6 @@ public class ${class_name}ServiceImpl implements ${class_name}Service {
     @Value(${app_size})
     private int pageSize;
 
-    @Override
-    public Page<${class_name}Response> getPages(int page) {
-        Pageable pageable = PageRequest.of(page,pageSize);
-        return get${class_name}Responses(pageable);
-    }
-
-    @Override
-    public Page<${class_name}Response> getPages(PageFilterRequest filter) {
-        Pageable pageable = PageRequest.of(filter.getPage(),filter.getPageSize());
-        return get${class_name}Responses(pageable);
-    }
-
     private Page<${class_name}Response> get${class_name}Responses(Pageable pageable) {
         Page<${class_name}Entity> result = this.repository.findAll(pageable);
 

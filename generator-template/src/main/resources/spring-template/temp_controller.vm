@@ -29,6 +29,24 @@ public class ${class_name}Controller {
                 );
     }
 
+    @GetMapping("/page/{pageNo}")
+    public ResponseEntity<Response> getPages(@PathVariable("pageNo") int page){
+        var result = this.service.getPages(page);
+        return ResponseEntity.ok()
+                .body(
+                        new Response(200,"Success", result)
+                );
+    }
+
+    @PostMapping("/page")
+    public ResponseEntity<Response> getPages(@RequestBody @Valid PageFilterRequest filter){
+        var result = this.service.getPages(filter);
+        return ResponseEntity.ok()
+                .body(
+                        new Response(200,"Success", result)
+                );
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Response> getById(@PathVariable("id") Long id){
         var result = this.service.getById(id).orElse(null);

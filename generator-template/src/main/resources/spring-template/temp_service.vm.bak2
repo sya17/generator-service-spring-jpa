@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ${class_name}Service {
-    Page<${class_name}Response> getPages(int page);
-    Page<${class_name}Response> getPages(PageFilterRequest filter);
     List<${class_name}Response> getAll();
     Optional<${class_name}Response> getById(Long id);
     Optional<${class_name}Response> save(${class_name}Request request);
