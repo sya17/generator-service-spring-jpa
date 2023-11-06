@@ -1,0 +1,7 @@
+#foreach ($table_name in $list_data.keySet())
+CREATE TABLE $table_name (
+#foreach ($column in $list_data.get($table_name))
+    $column
+#end
+);
+#end

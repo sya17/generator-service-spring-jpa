@@ -1,0 +1,11 @@
+package ${package};
+
+#foreach ($item in $import_parent)
+import $item ;
+#end
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ${class_name}Repository extends JpaRepository<${class_name}Entity, Long> {
+}

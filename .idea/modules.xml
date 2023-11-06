@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/generator-template/spring.iml" filepath="$PROJECT_DIR$/generator-template/spring.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/spring-tools.iml" filepath="$PROJECT_DIR$/.idea/spring-tools.iml" />
+    </modules>
+  </component>
+</project>

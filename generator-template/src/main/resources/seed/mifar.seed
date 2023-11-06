@@ -1,0 +1,35 @@
+**** desc {nama_kolom, tipe_data, unique, nullable, insertable, updatable, length, pk}
+
+#TABLE mst_user
+mu_id, bigserial, Y, N, Y, Y, - , Y
+mu_first_name, varchar, N, N, Y, Y, 100, -
+mu_last_name, varchar, N, N, Y, Y, 100, -
+mu_full_name, varchar, N, N, Y, Y, 200, -
+mu_username, varchar, Y, N, Y, Y, 100, -
+mu_password, varchar, Y, N, Y, Y, 100, -
+mu_email, varchar, Y, N, Y, Y, - , -
+mu_created, date, N, N, Y, Y, - , -
+mu_updated, date, N, N, Y, Y, - , -
+mu_created_by, varchar, N, N, Y, Y, - , -
+mu_updated_by, varchar, N, N, Y, Y, - , -
+mu_active, varchar, N, N, Y, Y, 1 , -
+
+#TABLE mst_role
+mr_id, bigserial, Y, N, Y, Y, - , Y
+mr_name, varchar, N, N, Y, Y, 100 , -
+mr_description, text, N, N, Y, Y, - , -
+mr_created, date, N, N, Y, Y, - , -
+mr_updated, date, N, N, Y, Y, - , -
+mr_created_by, varchar, N, N, Y, Y, - , -
+mr_updated_by, varchar, N, N, Y, Y, - , -
+mr_active, varchar, N, N, Y, Y, 1 , -
+
+#TABLE mst_group
+mg_id, bigserial, Y, N, Y, Y, - , Y
+mg_name, varchar, N, N, Y, Y, 100 , -
+mg_description, text, N, N, Y, Y, - , -
+mg_created, date, N, N, Y, Y, - , -
+mg_updated, date, N, N, Y, Y, - , -
+mg_created_by, varchar, N, N, Y, Y, - , -
+mg_updated_by, varchar, N, N, Y, Y, - , -
+mg_active, varchar, N, N, Y, Y, 1 , -

@@ -1,0 +1,26 @@
+package ${package} ;
+
+#foreach ($item in $import_parent)
+import $item ;
+#end
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.BeanUtils;
+
+import java.util.Date;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class ${class_name}Response {
+#foreach ($item in $data_list)
+
+    $item
+#end
+
+    public ${class_name}Response(${class_name}Entity entity) {
+        BeanUtils.copyProperties(entity, this);
+    }
+}

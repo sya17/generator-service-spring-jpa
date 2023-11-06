@@ -1,0 +1,30 @@
+package ${package} ;
+
+#foreach ($item in $import_parent)
+import $item ;
+#end
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.BeanUtils;
+
+import java.util.Date;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Entity
+@Table(name = "${table_name}")
+public class ${class_name}Entity {
+#foreach ($item in $data_list)
+
+    $item
+#end
+
+    public ${class_name}Entity(${class_name}Request model) {
+        BeanUtils.copyProperties(model, this);
+    }
+}

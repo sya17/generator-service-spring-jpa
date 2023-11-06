@@ -1,0 +1,105 @@
+package ${package};
+
+#foreach ($item in $import_parent)
+import $item ;
+#end
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class ${class_name}ServiceImpl implements ${class_name}Service {
+
+    private ${class_name}Repository repository;
+
+    @Value(${app_size})
+    private int pageSize;
+
+    private Page<${class_name}Response> get${class_name}Responses(Pageable pageable) {
+        Page<${class_name}Entity> result = this.repository.findAll(pageable);
+
+        if(result.getContent().isEmpty()){
+            return new PageImpl<>(Collections.emptyList(), pageable, 0);
+        }
+        List<${class_name}Response> responses = result.getContent().stream()
+                .map(${class_name}Response::new)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(responses, pageable, responses.size());
+    }
+
+    @Override
+    public List<${class_name}Response> getAll() {
+        List<${class_name}Entity> result = this.repository.findAll();
+        if(result.isEmpty()){
+            return Collections.emptyList();
+        }
+
+        return result.stream().map(${class_name}Response::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<${class_name}Response> getById(Long id) {
+        ${class_name}Entity entity = this.repository.findById(id).orElse(null);
+        if(entity == null){
+            return Optional.empty();
+        }
+        return Optional.of(new ${class_name}Response(entity));
+    }
+
+    @Override
+    public Optional<${class_name}Response> save(${class_name}Request request) {
+        ${class_name}Entity entity = new ${class_name}Entity(request);
+        try {
+            this.repository.saveAndFlush(entity);
+            return Optional.of(new ${class_name}Response(entity));
+        }catch (Exception e) {
+            throw new CommonApiException("Failed save to database", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public Optional<${class_name}Response> update(${class_name}Request request, Long id) {
+        // find data
+        ${class_name}Entity entity = this.repository.findById(id).orElse(null);
+        if(entity == null) {
+            throw new CommonApiException("Product with id"+ id +" not found", HttpStatus.BAD_REQUEST);
+        }
+        // update data
+        BeanUtils.copyProperties(request, entity);
+        // save ke database
+        try {
+            this.repository.saveAndFlush(entity);
+            return Optional.of(new ${class_name}Response(entity));
+        }catch (Exception e) {
+            throw new CommonApiException("Failed update to database", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public Optional<${class_name}Response> delete(Long id) {
+        ${class_name}Entity entity = this.repository.findById(id).orElse(null);
+        if(entity == null) {
+            throw new CommonApiException("Product with id"+ id +" not found", HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            this.repository.delete(entity);
+            return Optional.of(new ${class_name}Response(entity));
+        }catch (Exception e) {
+            throw new CommonApiException("Failed save to database", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+}
