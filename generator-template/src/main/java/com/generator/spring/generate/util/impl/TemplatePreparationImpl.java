@@ -371,7 +371,7 @@ public class TemplatePreparationImpl implements TemplatePreparation {
             StringBuffer attr = new StringBuffer();
             attr.append("private");
             attr.append(" ");
-            attr.append(replaceAttrName((String) map.get("type")));
+            attr.append((String) map.get("type"));
             attr.append(" ");
             attr.append(replaceAttrName((String) map.get("name")));
             attr.append(";");

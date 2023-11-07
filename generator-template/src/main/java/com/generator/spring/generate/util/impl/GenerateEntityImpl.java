@@ -203,11 +203,16 @@ public class GenerateEntityImpl implements GenerateEntity {
     public String setNameAttr(String input) {
         String[] words = input.split("_");
         StringBuilder result = new StringBuilder();
+        int count = 0;
         for (String word : words) {
-            if (!word.isEmpty()) {
+            if (count > 0) {
+                result.append(Character.toUpperCase(word.charAt(0)));
+                result.append(word.substring(1));
+            }else{
                 result.append(Character.toLowerCase(word.charAt(0)));
                 result.append(word.substring(1));
             }
+            count++;
         }
         return result.toString();
     }
