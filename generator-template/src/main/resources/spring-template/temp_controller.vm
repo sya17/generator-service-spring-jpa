@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "${class_name}", description = "REST API for ${class_name}")
 public class ${class_name}Controller {
 
-    private ${class_name}Service service;
+    private final ${class_name}Service service;
 
     @GetMapping
     @ApiResponses(value = {

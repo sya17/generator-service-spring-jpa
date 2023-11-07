@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ${class_name}Service {
 
-    private ${class_name}Repository repository;
+    private final ${class_name}Repository repository;
 
     private Page<${class_name}Response> get${class_name}Responses(Pageable pageable) {
         Page<${class_name}Entity> result = this.repository.findAll(pageable);
@@ -106,7 +106,7 @@ public class ${class_name}Service {
                     .timestamp(new Date())
                     .data(new ${class_name}Response(entity))
                     .statusCode(HttpStatus.OK.value())
-                    .message("Created Success")
+                    .message("Updated Success")
                     .build();
             return data;
         } catch (Exception e) {
