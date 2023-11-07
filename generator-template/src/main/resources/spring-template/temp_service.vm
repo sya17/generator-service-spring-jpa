@@ -59,7 +59,7 @@ public class ${class_name}Service {
         return data;
     }
 
-    public BaseResponse<${class_name}Response> getById(Long id) {
+    public BaseResponse<${class_name}Response> getById(${type_pk} id) {
         ${class_name}Entity entity = this.repository.findById(id).orElse(null);
         if (entity == null) {
             throw new CommonApiException("Id " + id + " Not Found", HttpStatus.BAD_REQUEST);
@@ -99,7 +99,7 @@ public class ${class_name}Service {
         }
     }
 
-    public BaseResponse<${class_name}Response> update(${class_name}Request request, Long id) {
+    public BaseResponse<${class_name}Response> update(${class_name}Request request, ${type_pk} id) {
         // find data
         ${class_name}Entity entity = this.repository.findById(id).orElse(null);
         if (entity == null) {
@@ -127,7 +127,7 @@ public class ${class_name}Service {
         }
     }
 
-    public BaseResponse<${class_name}Response> delete(Long id) {
+    public BaseResponse<${class_name}Response> delete(${type_pk} id) {
         ${class_name}Entity entity = this.repository.findById(id).orElse(null);
         if (entity == null) {
             throw new CommonApiException("Id" + id + " not found", HttpStatus.BAD_REQUEST);

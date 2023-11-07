@@ -7,4 +7,5 @@ import java.util.Map;
 
 public interface GenerateEntity {
     public List<TableDescription> generate();
+    public String getTypeAttr(String type);
 }

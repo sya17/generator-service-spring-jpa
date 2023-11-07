@@ -3,10 +3,12 @@ package com.generator.spring.generate.util.impl;
 import com.generator.spring.generate.template.ColumnInformation;
 import com.generator.spring.generate.template.TableInformation;
 import com.generator.spring.generate.template.TemplateProperties;
+import com.generator.spring.generate.template.seed.ColumnDescription;
 import com.generator.spring.generate.template.seed.TableDescription;
 import com.generator.spring.generate.util.GenerateDDL;
 import com.generator.spring.generate.util.GenerateEntity;
 import com.generator.spring.generate.util.TemplatePreparation;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
@@ -30,6 +32,7 @@ import java.util.regex.Pattern;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class TemplatePreparationImpl implements TemplatePreparation {
 
     @Autowired
@@ -137,7 +140,7 @@ public class TemplatePreparationImpl implements TemplatePreparation {
     }
 
     @Override
-    public TemplateProperties generateTemplatePropertiesRepository(String nameClass) {
+    public TemplateProperties generateTemplatePropertiesRepository(String nameClass, List<ColumnDescription> columnDescriptions) {
         String fileGenerated = nameClass + "Repository";
 
         List listImportParent = new ArrayList();
@@ -147,12 +150,13 @@ public class TemplatePreparationImpl implements TemplatePreparation {
         mapContex.put("package", repositoryPackage);
         mapContex.put("import_parent", listImportParent);
         mapContex.put("class_name", nameClass);
+        setStaticContexByColumnDesc(mapContex, columnDescriptions);
 
         return generateTemplateProperties(repositoryTempName, repositoryPackage, fileGenerated, generateContex(mapContex));
     }
 
     @Override
-    public TemplateProperties generateTemplatePropertiesService(String nameClass) {
+    public TemplateProperties generateTemplatePropertiesService(String nameClass, List<ColumnDescription> columnDescriptions) {
         String fileGenerated = nameClass + "Service";
 
 //        List listImportParent = new ArrayList();
@@ -171,6 +175,7 @@ public class TemplatePreparationImpl implements TemplatePreparation {
         mapContex.put("package", servicePackage);
         mapContex.put("import_parent", listImportParent);
         mapContex.put("class_name", nameClass);
+        setStaticContexByColumnDesc(mapContex, columnDescriptions);
 
         return generateTemplateProperties(serviceTempName, servicePackage, fileGenerated, generateContex(mapContex));
     }
@@ -196,7 +201,7 @@ public class TemplatePreparationImpl implements TemplatePreparation {
     }
 
     @Override
-    public TemplateProperties generateTemplatePropertiesController(String nameClass) {
+    public TemplateProperties generateTemplatePropertiesController(String nameClass, List<ColumnDescription> columnDescriptions) {
         String fileGenerated = nameClass + "Controller";
 
         List listImportParent = new ArrayList();
@@ -209,6 +214,7 @@ public class TemplatePreparationImpl implements TemplatePreparation {
         mapContex.put("import_parent", listImportParent);
         mapContex.put("class_name", nameClass);
         mapContex.put("path_api", "/api/v1/" + nameClass.replaceAll("(.)([A-Z])", "$1_$2").toLowerCase());
+        setStaticContexByColumnDesc(mapContex, columnDescriptions);
 
         return generateTemplateProperties(controllerTempName, controllerPackage, fileGenerated, generateContex(mapContex));
     }
@@ -421,6 +427,14 @@ public class TemplatePreparationImpl implements TemplatePreparation {
 
     public void setStaticContex(Map map) {
         map.put("app_size", "\"${app.page-size.category}\"");
+    }
+
+    public void setStaticContexByColumnDesc(Map map, List<ColumnDescription> columnDescriptions) {
+        for (ColumnDescription columnDescription : columnDescriptions) {
+            if (columnDescription.isPrimaryKey()) {
+                map.put("type_pk", generateEntity.getTypeAttr(columnDescription.getDataType()));
+            }
+        }
     }
 
     public void setStaticListImportController(List list) {

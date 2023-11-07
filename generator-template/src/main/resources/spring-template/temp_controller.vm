@@ -34,7 +34,7 @@ public class ${class_name}Controller {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BaseResponse> getById(@PathVariable("id") Long id) {
+    public ResponseEntity<BaseResponse> getById(@PathVariable("id") ${type_pk} id) {
         var result = this.service.getById(id);
         return new ResponseEntity<BaseResponse>(result, HttpStatus.OK);
     }
@@ -47,13 +47,13 @@ public class ${class_name}Controller {
 
     @PatchMapping("/{id}")
     public ResponseEntity<BaseResponse> update(@RequestBody @Valid ${class_name}Request request,
-                                               @PathVariable("id") Long id) {
+                                               @PathVariable("id") ${type_pk} id) {
         var result = this.service.update(request, id);
         return new ResponseEntity<BaseResponse>(result, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<BaseResponse> delete(@PathVariable("id") Long id) {
+    public ResponseEntity<BaseResponse> delete(@PathVariable("id") ${type_pk} id) {
         var result = this.service.delete(id);
         return new ResponseEntity<BaseResponse>(result, HttpStatus.OK);
     }
