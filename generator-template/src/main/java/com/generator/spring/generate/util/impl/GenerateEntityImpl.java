@@ -92,7 +92,7 @@ public class GenerateEntityImpl implements GenerateEntity {
                                 parts[0].trim(), parts[1].trim(),
                                 parts[2].trim().equals("Y"),
                                 parts[3].trim().equals("N"),
-                                parts[4].trim().equals("Y"),
+                                parts[4].trim().equals("N"),
                                 parts[5].trim().equals("Y"),
                                 parts[6].trim(),
                                 parts[7].trim().equals("Y")
@@ -186,6 +186,8 @@ public class GenerateEntityImpl implements GenerateEntity {
             case "bigserial":
                 return "Long";
             case "int":
+                return "Integer";
+            case "int2":
                 return "Integer";
             case "int4":
                 return "Integer";
