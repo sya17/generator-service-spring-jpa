@@ -44,29 +44,30 @@ public class ${class_name}Service {
             Integer page,
             Integer size
     ) {
-        List<${class_name}Entity> result = this.repository.findAll();
-        var data = BaseResponse.<List<${class_name}Response>>builder()
+        Pageable pageable = PageRequest.of(page, pageSize);
+        Page<MstUsersResponse> pageResult = getMstUsersResponses(pageable);
+        var data = BaseResponse.<List<MstUsersResponse>>builder()
                 .timestamp(new Date())
-                .data(result.stream().map(${class_name}Response::new).collect(Collectors.toList()))
+                .data(pageResult.getContent().stream().collect(Collectors.toList()))
                 .statusCode(HttpStatus.OK.value())
                 .error("")
                 .message("")
-                .pageNo(0)
-                .pageRecords(0)
-                .ttlPages(0)
-                .ttlRecords(0)
+                .pageNo(page)
+                .pageRecords(pageResult.getSize())
+                .ttlPages(pageResult.getTotalPages())
+                .ttlRecords((int) pageResult.getTotalElements())
                 .build();
-        if (result.isEmpty()) {
-            return data;
-        }
         return data;
     }
 
     public BaseResponse<${class_name}Response> getById(Long id) {
-        ${class_name}Entity entity = this.repository.findById(id).orElse(null);
-        var data = BaseResponse.<${class_name}Response>builder()
+        MstUsersEntity entity = this.repository.findById(id).orElse(null);
+        if (entity == null) {
+            throw new CommonApiException("Id " + id + " Not Found", HttpStatus.BAD_REQUEST);
+        }
+        var data = BaseResponse.<MstUsersResponse>builder()
                 .timestamp(new Date())
-                .data(new ${class_name}Response(entity))
+                .data(new MstUsersResponse(entity))
                 .statusCode(HttpStatus.OK.value())
                 .error("")
                 .message("")
@@ -75,9 +76,6 @@ public class ${class_name}Service {
                 .ttlPages(0)
                 .ttlRecords(0)
                 .build();
-        if (entity == null) {
-            return data;
-        }
         return data;
     }
 
