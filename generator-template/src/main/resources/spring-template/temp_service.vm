@@ -106,7 +106,7 @@ public class ${class_name}Service {
         // find data
         ${class_name}Entity entity = this.repository.findById(id).orElse(null);
         if (entity == null) {
-            throw new CommonApiException("Product with id" + id + " not found", HttpStatus.BAD_REQUEST);
+            throw new CommonApiException("Id " + id + " not found", HttpStatus.BAD_REQUEST);
         }
         // update data
         BeanUtils.copyProperties(request, entity);
@@ -133,7 +133,7 @@ public class ${class_name}Service {
     public BaseResponse<${class_name}Response> delete(Long id) {
         ${class_name}Entity entity = this.repository.findById(id).orElse(null);
         if (entity == null) {
-            throw new CommonApiException("Product with id" + id + " not found", HttpStatus.BAD_REQUEST);
+            throw new CommonApiException("Id" + id + " not found", HttpStatus.BAD_REQUEST);
         }
 
         try {
