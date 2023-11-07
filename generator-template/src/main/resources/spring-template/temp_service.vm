@@ -41,7 +41,7 @@ public class ${class_name}Service {
             Integer page,
             Integer size
     ) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page - 1, size);
         Page<${class_name}Response> pageResult = get${class_name}Responses(pageable);
         var data = BaseResponse.<List<${class_name}Response>>builder()
                         .timestamp(new Date())
