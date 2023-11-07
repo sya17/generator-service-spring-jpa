@@ -30,7 +30,7 @@ public class ColumnDescription {
                 ", nullable=" + isNullable +
                 ", insertable=" + isInsertable +
                 ", updatable=" + isUpdatable +
-                (Objects.nonNull(length) && !"-".equalsIgnoreCase(length) ? ",length='" + length + "'" : "");
+                (Objects.nonNull(length) && !"-".equalsIgnoreCase(length) ? ",length=" + length + "" : "");
     }
 
 }
