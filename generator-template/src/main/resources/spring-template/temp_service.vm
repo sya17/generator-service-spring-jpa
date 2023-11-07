@@ -114,23 +114,4 @@ public class ${class_name}Service {
         }
     }
 
-    public BaseResponse<${class_name}Response> delete(${type_pk} id) {
-        ${class_name}Entity entity = this.repository.findById(id).orElse(null);
-        if (entity == null) {
-            throw new CommonApiException("Id" + id + " not found", HttpStatus.BAD_REQUEST);
-        }
-
-        try {
-            this.repository.delete(entity);
-            var data = BaseResponse.<${class_name}Response>builder()
-                    .timestamp(new Date())
-                    .data(new ${class_name}Response(entity))
-                    .statusCode(HttpStatus.OK.value())
-                    .message("Updated Success")
-                    .build();
-            return data;
-        } catch (Exception e) {
-            throw new CommonApiException("Failed save to database", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 }
