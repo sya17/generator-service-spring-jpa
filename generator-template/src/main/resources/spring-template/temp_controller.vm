@@ -3,9 +3,15 @@ package ${package};
 #foreach ($item in $import_parent)
 import $item ;
 #end
-import lombok.RequiredArgsConstructor;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.constraints.PositiveOrZero;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,12 +19,33 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("${path_api}")
+@Tag(name = "${class_name}", description = "REST API for ${class_name}")
 public class ${class_name}Controller {
 
     @Autowired
     private ${class_name}Service service;
 
     @GetMapping
+
+    @GetMapping
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Get Success",
+                    content = {@Content(mediaType = "application/json",
+                    schema = @Schema(implementation = BaseResponse.class))}),
+            @ApiResponse(responseCode = "400",
+                    description = "OK",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = BaseResponse.class))}),
+            @ApiResponse(responseCode = "404",
+                    description = "OK",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = BaseResponse.class))}),
+            @ApiResponse(responseCode = "503",
+                    description = "OK",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = BaseResponse.class))})
+    })
     public ResponseEntity<BaseResponse> getAll(
             @Parameter(description = "search key")
             @RequestParam(name = "searchKey", defaultValue = "1") String searchKey,
@@ -34,27 +61,76 @@ public class ${class_name}Controller {
     }
 
     @GetMapping("/{id}")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Get Success",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = BaseResponse.class))}),
+            @ApiResponse(responseCode = "400",
+                    description = "OK",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = BaseResponse.class))}),
+            @ApiResponse(responseCode = "404",
+                    description = "OK",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = BaseResponse.class))}),
+            @ApiResponse(responseCode = "503",
+                    description = "OK",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = BaseResponse.class))})
+    })
     public ResponseEntity<BaseResponse> getById(@PathVariable("id") ${type_pk} id) {
         var result = this.service.getById(id);
         return new ResponseEntity<BaseResponse>(result, HttpStatus.OK);
     }
 
     @PostMapping
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201",
+                    description = "Created Success",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = BaseResponse.class))}),
+            @ApiResponse(responseCode = "400",
+                    description = "Bad Request",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = BaseResponse.class))}),
+            @ApiResponse(responseCode = "404",
+                    description = "Not Found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = BaseResponse.class))}),
+            @ApiResponse(responseCode = "503",
+                    description = "Service Unavailable",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = BaseResponse.class))})
+    })
     public ResponseEntity<BaseResponse> save(@RequestBody @Valid ${class_name}Request request) {
         var result = this.service.save(request);
         return new ResponseEntity<BaseResponse>(result, HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200",
+                    description = "Updated Success",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = BaseResponse.class))}),
+            @ApiResponse(responseCode = "400",
+                    description = "Bad Request",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = BaseResponse.class))}),
+            @ApiResponse(responseCode = "404",
+                    description = "Not Found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = BaseResponse.class))}),
+            @ApiResponse(responseCode = "503",
+                    description = "Service Unavailable",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = BaseResponse.class))})
+    })
     public ResponseEntity<BaseResponse> update(@RequestBody @Valid ${class_name}Request request,
                                                @PathVariable("id") ${type_pk} id) {
         var result = this.service.update(request, id);
         return new ResponseEntity<BaseResponse>(result, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<BaseResponse> delete(@PathVariable("id") ${type_pk} id) {
-        var result = this.service.delete(id);
-        return new ResponseEntity<BaseResponse>(result, HttpStatus.OK);
-    }
 }

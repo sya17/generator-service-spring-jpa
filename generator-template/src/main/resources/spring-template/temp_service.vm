@@ -6,15 +6,16 @@ import $item ;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,16 +47,15 @@ public class ${class_name}Service {
         Pageable pageable = PageRequest.of(page, size);
         Page<${class_name}Response> pageResult = get${class_name}Responses(pageable);
         var data = BaseResponse.<List<${class_name}Response>>builder()
-                .timestamp(new Date())
-                .data(pageResult.getContent().stream().collect(Collectors.toList()))
-                .statusCode(HttpStatus.OK.value())
-                .error("")
-                .message("")
-                .pageNo(page)
-                .pageRecords(pageResult.getSize())
-                .ttlPages(pageResult.getTotalPages())
-                .ttlRecords((int) pageResult.getTotalElements())
-                .build();
+                        .timestamp(new Date())
+                        .data(pageResult.getContent().stream().collect(Collectors.toList()))
+                        .statusCode(HttpStatus.OK.value())
+                        .message("Get Successs")
+                        .pageNo(page + 1)
+                        .pageRecords(pageResult.getSize())
+                        .ttlPages(pageResult.getTotalPages())
+                        .ttlRecords((int) pageResult.getTotalElements())
+                        .build();
         return data;
     }
 
@@ -86,12 +86,7 @@ public class ${class_name}Service {
                     .timestamp(new Date())
                     .data(new ${class_name}Response(entity))
                     .statusCode(HttpStatus.OK.value())
-                    .error("")
-                    .message("")
-                    .pageNo(0)
-                    .pageRecords(0)
-                    .ttlPages(0)
-                    .ttlRecords(0)
+                    .message("Get Successs")
                     .build();
             return data;
         } catch (Exception e) {
@@ -114,12 +109,7 @@ public class ${class_name}Service {
                     .timestamp(new Date())
                     .data(new ${class_name}Response(entity))
                     .statusCode(HttpStatus.OK.value())
-                    .error("")
-                    .message("")
-                    .pageNo(0)
-                    .pageRecords(0)
-                    .ttlPages(0)
-                    .ttlRecords(0)
+                    .message("Created Success")
                     .build();
             return data;
         } catch (Exception e) {
@@ -139,12 +129,7 @@ public class ${class_name}Service {
                     .timestamp(new Date())
                     .data(new ${class_name}Response(entity))
                     .statusCode(HttpStatus.OK.value())
-                    .error("")
-                    .message("")
-                    .pageNo(0)
-                    .pageRecords(0)
-                    .ttlPages(0)
-                    .ttlRecords(0)
+                    .message("Updated Success")
                     .build();
             return data;
         } catch (Exception e) {
