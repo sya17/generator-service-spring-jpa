@@ -24,9 +24,6 @@ public class ${class_name}Service {
     @Autowired
     private ${class_name}Repository repository;
 
-    @Value("${app.page-size.category}")
-    private int pageSize;
-
     private Page<${class_name}Response> get${class_name}Responses(Pageable pageable) {
         Page<${class_name}Entity> result = this.repository.findAll(pageable);
 
@@ -47,8 +44,8 @@ public class ${class_name}Service {
             Integer size
     ) {
         Pageable pageable = PageRequest.of(page, pageSize);
-        Page<MstUsersResponse> pageResult = getMstUsersResponses(pageable);
-        var data = BaseResponse.<List<MstUsersResponse>>builder()
+        Page<${class_name}Response> pageResult = get${class_name}Responses(pageable);
+        var data = BaseResponse.<List<${class_name}Response>>builder()
                 .timestamp(new Date())
                 .data(pageResult.getContent().stream().collect(Collectors.toList()))
                 .statusCode(HttpStatus.OK.value())
@@ -63,13 +60,13 @@ public class ${class_name}Service {
     }
 
     public BaseResponse<${class_name}Response> getById(Long id) {
-        MstUsersEntity entity = this.repository.findById(id).orElse(null);
+        ${class_name}Entity entity = this.repository.findById(id).orElse(null);
         if (entity == null) {
             throw new CommonApiException("Id " + id + " Not Found", HttpStatus.BAD_REQUEST);
         }
-        var data = BaseResponse.<MstUsersResponse>builder()
+        var data = BaseResponse.<${class_name}Response>builder()
                 .timestamp(new Date())
-                .data(new MstUsersResponse(entity))
+                .data(new ${class_name}Response(entity))
                 .statusCode(HttpStatus.OK.value())
                 .error("")
                 .message("")
