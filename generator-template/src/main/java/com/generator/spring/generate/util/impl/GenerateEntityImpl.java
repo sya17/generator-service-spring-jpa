@@ -89,10 +89,11 @@ public class GenerateEntityImpl implements GenerateEntity {
                     String[] parts = line.split(",");
                     if (parts.length == 8) {
                         ColumnDescription columnDescription = new ColumnDescription(
-                                parts[0].trim(), parts[1].trim(),
+                                parts[0].trim(),
+                                parts[1].trim(),
                                 parts[2].trim().equals("Y"),
-                                parts[3].trim().equals("N"),
-                                parts[4].trim().equals("N"),
+                                parts[3].trim().equals("Y"),
+                                parts[4].trim().equals("Y"),
                                 parts[5].trim().equals("Y"),
                                 parts[6].trim(),
                                 parts[7].trim().equals("Y")
