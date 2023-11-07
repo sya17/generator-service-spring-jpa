@@ -159,6 +159,12 @@ public class GenerateEntityImpl implements GenerateEntity {
                 sb.append("     ").append("@Type(type = \"pg-uuid\")").append("\n");
                 setAttrEntityContex(sb, columnDescription);
                 break;
+            case "varchar":
+                sb.append(" ").append("@Id").append("\n");
+                sb.append("     ").append("@GenericGenerator(name = \"uuid2\", strategy = \"org.hibernate.id.UUIDGenerator\")").append("\n");
+                sb.append("     ").append("@Type(type = \"pg-uuid\")").append("\n");
+                setAttrEntityContex(sb, columnDescription);
+                break;
             default:
                 sb.append("     ").append("@Id").append("\n");
                 sb.append("     ").append("@GeneratedValue(strategy = GenerationType.IDENTITY)").append("\n");
@@ -211,7 +217,7 @@ public class GenerateEntityImpl implements GenerateEntity {
             if (count > 0) {
                 result.append(Character.toUpperCase(word.charAt(0)));
                 result.append(word.substring(1));
-            }else{
+            } else {
                 result.append(Character.toLowerCase(word.charAt(0)));
                 result.append(word.substring(1));
             }
