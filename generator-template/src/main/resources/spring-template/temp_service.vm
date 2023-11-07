@@ -48,7 +48,7 @@ public class ${class_name}Service {
                         .data(pageResult.getContent().stream().collect(Collectors.toList()))
                         .statusCode(HttpStatus.OK.value())
                         .message("Get Successs")
-                        .pageNo(page + 1)
+                        .pageNo(page)
                         .pageRecords(pageResult.getSize())
                         .ttlPages(pageResult.getTotalPages())
                         .ttlRecords((int) pageResult.getTotalElements())
