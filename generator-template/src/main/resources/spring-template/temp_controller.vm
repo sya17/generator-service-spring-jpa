@@ -44,10 +44,6 @@ public class ${class_name}Controller {
                             schema = @Schema(implementation = BaseResponse.class))})
     })
     public ResponseEntity<BaseResponse> getAll(
-            @Parameter(description = "search key")
-            @RequestParam(name = "searchKey", defaultValue = "1") String searchKey,
-            @Parameter(description = "search value")
-            @RequestParam(name = "searchValue", defaultValue = "1") String searchValue,
             @Parameter(description = "1-based page index (1..N)")
             @RequestParam(name = "page", defaultValue = "1") @PositiveOrZero Integer page,
             @Parameter(description = "page size")

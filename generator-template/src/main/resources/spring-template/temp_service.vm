@@ -38,8 +38,6 @@ public class ${class_name}Service {
     }
 
     public BaseResponse<List<${class_name}Response>> getAll(
-            String searchKey,
-            String searchValue,
             Integer page,
             Integer size
     ) {
