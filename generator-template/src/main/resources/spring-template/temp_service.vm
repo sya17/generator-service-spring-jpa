@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ${class_name}Service {
 
-    @Autowired
     private ${class_name}Repository repository;
 
     private Page<${class_name}Response> get${class_name}Responses(Pageable pageable) {
