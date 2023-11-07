@@ -161,8 +161,6 @@ public class GenerateEntityImpl implements GenerateEntity {
                 break;
             case "varchar":
                 sb.append(" ").append("@Id").append("\n");
-                sb.append("     ").append("@GenericGenerator(name = \"uuid2\", strategy = \"org.hibernate.id.UUIDGenerator\")").append("\n");
-                sb.append("     ").append("@Type(type = \"pg-uuid\")").append("\n");
                 setAttrEntityContex(sb, columnDescription);
                 break;
             default:
