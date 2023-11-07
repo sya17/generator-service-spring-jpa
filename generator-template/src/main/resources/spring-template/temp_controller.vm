@@ -20,8 +20,17 @@ public class ${class_name}Controller {
     private ${class_name}Service service;
 
     @GetMapping
-    public ResponseEntity<BaseResponse> getAll() {
-        var result = this.service.getAll();
+    public ResponseEntity<BaseResponse> getAll(
+            @Parameter(description = "search key")
+            @RequestParam(name = "searchKey", defaultValue = "1") String searchKey,
+            @Parameter(description = "search value")
+            @RequestParam(name = "searchValue", defaultValue = "1") String searchValue,
+            @Parameter(description = "1-based page index (1..N)")
+            @RequestParam(name = "page", defaultValue = "1") @PositiveOrZero Integer page,
+            @Parameter(description = "page size")
+            @RequestParam(name = "size", defaultValue = "20") @PositiveOrZero Integer size
+    ) {
+        var result = this.service.getAll(searchKey, searchValue, page, size);
         return new ResponseEntity<BaseResponse>(result, HttpStatus.OK);
     }
 

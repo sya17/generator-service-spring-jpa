@@ -38,7 +38,12 @@ public class ${class_name}Service {
         return new PageImpl<>(responses, pageable, responses.size());
     }
 
-    public BaseResponse<List<${class_name}Response>> getAll() {
+    public BaseResponse<List<${class_name}Response>> getAll(
+            String searchKey,
+            String searchValue,
+            Integer page,
+            Integer size
+    ) {
         List<${class_name}Entity> result = this.repository.findAll();
         var data = BaseResponse.<List<${class_name}Response>>builder()
                 .timestamp(new Date())
