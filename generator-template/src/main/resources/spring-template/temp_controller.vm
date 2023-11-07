@@ -3,84 +3,50 @@ package ${package};
 #foreach ($item in $import_parent)
 import $item ;
 #end
+
+import lombok.RequiredArgsConstructor;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("${path_api}")
 public class ${class_name}Controller {
 
     @Autowired
     private ${class_name}Service service;
 
-    @Autowired
-    public ${class_name}Controller(${class_name}Service service) {
-        this.service = service;
-    }
-
     @GetMapping
-    public ResponseEntity<Response> getAll(){
+    public ResponseEntity<BaseResponse> getAll() {
         var result = this.service.getAll();
-        return ResponseEntity.ok()
-                .body(
-                        new Response(200,"Success", result)
-                );
-    }
-
-    @GetMapping("/page/{pageNo}")
-    public ResponseEntity<Response> getPages(@PathVariable("pageNo") int page){
-        var result = this.service.getPages(page);
-        return ResponseEntity.ok()
-                .body(
-                        new Response(200,"Success", result)
-                );
-    }
-
-    @PostMapping("/page")
-    public ResponseEntity<Response> getPages(@RequestBody @Valid PageFilterRequest filter){
-        var result = this.service.getPages(filter);
-        return ResponseEntity.ok()
-                .body(
-                        new Response(200,"Success", result)
-                );
+        return new ResponseEntity<BaseResponse>(result, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Response> getById(@PathVariable("id") Long id){
-        var result = this.service.getById(id).orElse(null);
-        return ResponseEntity.ok()
-                .body(
-                        new Response(200,"Success", result)
-                );
+    public ResponseEntity<BaseResponse> getById(@PathVariable("id") Long id) {
+        var result = this.service.getById(id);
+        return new ResponseEntity<BaseResponse>(result, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Response> save(@RequestBody @Valid ${class_name}Request request){
-        var result = this.service.save(request).orElse(null);
-        return ResponseEntity.ok()
-                .body(
-                        new Response(200,"Success", result)
-                );
+    public ResponseEntity<BaseResponse> save(@RequestBody @Valid ${class_name}Request request) {
+        var result = this.service.save(request);
+        return new ResponseEntity<BaseResponse>(result, HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Response> update(@RequestBody @Valid ${class_name}Request request,
-                                @PathVariable("id") Long id){
-        var result = this.service.update(request, id).orElse(null);
-        return ResponseEntity.ok()
-                .body(
-                        new Response(200,"Success", result)
-                );
+    public ResponseEntity<BaseResponse> update(@RequestBody @Valid ${class_name}Request request,
+                                               @PathVariable("id") Long id) {
+        var result = this.service.update(request, id);
+        return new ResponseEntity<BaseResponse>(result, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Response> delete(@PathVariable("id") Long id){
-        var result = this.service.delete(id).orElse(null);
-        return ResponseEntity.ok()
-                .body(
-                        new Response(200,"Success", result)
-                );
+    public ResponseEntity<BaseResponse> delete(@PathVariable("id") Long id) {
+        var result = this.service.delete(id);
+        return new ResponseEntity<BaseResponse>(result, HttpStatus.OK);
     }
 }

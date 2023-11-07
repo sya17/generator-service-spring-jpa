@@ -1,0 +1,19 @@
+package ${package};
+
+#foreach ($item in $import_parent)
+import $item ;
+#end
+import org.springframework.data.domain.Page;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface ${class_name}Service {
+    Page<${class_name}Response> getPages(int page);
+    Page<${class_name}Response> getPages(PageFilterRequest filter);
+    List<${class_name}Response> getAll();
+    Optional<${class_name}Response> getById(Long id);
+    Optional<${class_name}Response> save(${class_name}Request request);
+    Optional<${class_name}Response> update(${class_name}Request request, Long id);
+    Optional<${class_name}Response> delete(Long id);
+}

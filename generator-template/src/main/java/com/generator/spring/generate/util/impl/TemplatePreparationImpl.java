@@ -155,10 +155,17 @@ public class TemplatePreparationImpl implements TemplatePreparation {
     public TemplateProperties generateTemplatePropertiesService(String nameClass) {
         String fileGenerated = nameClass + "Service";
 
+//        List listImportParent = new ArrayList();
+//        listImportParent.add(dtoResponsePackage + "." + nameClass + "Response");
+//        listImportParent.add(dtoRequestPackage + "." + nameClass + "Request");
+//        setStaticListImportService(listImportParent);
+//
         List listImportParent = new ArrayList();
-        listImportParent.add(dtoResponsePackage + "." + nameClass + "Response");
+        listImportParent.add(entityPackage + "." + nameClass + "Entity");
+        listImportParent.add(repositoryPackage + "." + nameClass + "Repository");
         listImportParent.add(dtoRequestPackage + "." + nameClass + "Request");
-        setStaticListImportService(listImportParent);
+        listImportParent.add(dtoResponsePackage + "." + nameClass + "Response");
+        setStaticListImportServiceImpl(listImportParent);
 
         Map mapContex = new HashMap();
         mapContex.put("package", servicePackage);
@@ -417,15 +424,16 @@ public class TemplatePreparationImpl implements TemplatePreparation {
     }
 
     public void setStaticListImportController(List list) {
-        list.add(dtoRequestPackage + ".PageFilterRequest");
-        list.add(dtoResponsePackage + ".Response");
+//        list.add(dtoRequestPackage + ".PageFilterRequest");
+//        list.add(dtoResponsePackage + ".Response");
         list.add(dtoResponsePackage + ".BaseResponse");
     }
 
     public void setStaticListImportServiceImpl(List list) {
-        list.add("com.test.generate.exception.CommonApiException");
+//        list.add("com.test.generate.exception.CommonApiException");
 //        list.add(dtoRequestPackage + ".PageFilterRequest");
         list.add(dtoResponsePackage + ".BaseResponse");
+        list.add("com.fincoreplus.baseservice.exception.CommonApiException");
     }
 
     public void setStaticListImportService(List list) {

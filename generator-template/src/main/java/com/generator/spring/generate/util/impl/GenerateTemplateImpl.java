@@ -91,7 +91,9 @@ public class GenerateTemplateImpl implements GenerateTemplate {
             fileClass = new File(templateProperties.getFilePath());
 
             if (folder == null || !folder.exists()) {
-                throw new RuntimeException("Folder Not Found");
+                log.error("FOLDER {}", folder.getAbsoluteFile());
+                log.error("Folder Not Found");
+//                throw new RuntimeException("Folder Not Found");
             }
 
 //            if (templateProperties.isCreateDrop()) {
