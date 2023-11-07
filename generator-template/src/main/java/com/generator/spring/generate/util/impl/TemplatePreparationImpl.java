@@ -427,6 +427,8 @@ public class TemplatePreparationImpl implements TemplatePreparation {
 //        list.add(dtoRequestPackage + ".PageFilterRequest");
 //        list.add(dtoResponsePackage + ".Response");
         list.add(dtoResponsePackage + ".BaseResponse");
+        list.add("io.swagger.v3.oas.annotations.Parameter");
+        list.add("jakarta.validation.constraints.PositiveOrZero");
     }
 
     public void setStaticListImportServiceImpl(List list) {

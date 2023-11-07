@@ -3,7 +3,6 @@ package ${package};
 #foreach ($item in $import_parent)
 import $item ;
 #end
-
 import lombok.RequiredArgsConstructor;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

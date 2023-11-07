@@ -49,7 +49,7 @@ public class generate implements CommandLineRunner {
                 generateTemplate.generate(templatePreparation.generateTemplatePropertiesService(nameClass));
 //                generateTemplate.generate(templatePreparation.generateTemplatePropertiesServiceImpl(nameClass));
                 generateTemplate.generate(templatePreparation.generateTemplatePropertiesController(nameClass));
-                generateTemplate.generate(templatePreparation.generateTemplatePropertiesDDL(tableDescription));
+//                generateTemplate.generate(templatePreparation.generateTemplatePropertiesDDL(tableDescription));
             }
 //            generateTemplate.generate(templatePreparation.generateTemplatePropertiesDDL(listTable));
             log.trace("#################### Success Generate");
