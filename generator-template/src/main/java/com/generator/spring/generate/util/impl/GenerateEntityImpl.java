@@ -86,19 +86,20 @@ public class GenerateEntityImpl implements GenerateEntity {
                     continue;
                 }
 
-                if (line.startsWith("#PK")) {
-                    String[] listPk = line.split(",");
-                    if (listPk.length > 0) {
+                if (currentTableDescription != null) {
+                    if (line.startsWith("#PK")) {
+                        String[] listPk = line.trim().replace("#PK", "").split(",");
+                        if (listPk.length > 0) {
 
-                        for (String pk : listPk) {
                             Map<String, ColumnDescription> mapPk = new HashMap<>();
-                            mapPk.put(pk, null);
+                            for (String pk : listPk) {
+                                mapPk.put(pk.trim(), null);
+                            }
                             currentTableDescription.setMapPK(mapPk);
                         }
+                        continue;
                     }
-                }
 
-                if (currentTableDescription != null) {
                     String[] parts = line.split(",");
                     if (parts.length == 8) {
                         ColumnDescription columnDescription = new ColumnDescription(
@@ -133,42 +134,63 @@ public class GenerateEntityImpl implements GenerateEntity {
             log.error("LIST TABLE NULL");
             throw new RuntimeException("LIST TABLE NULL");
         }
-
         for (TableDescription tableDescription : listTD) {
-            boolean pkIsOne = tableDescription.getMapPK() == null && tableDescription.getMapPK().size() == 0;
-            Map mapEntityContex = new HashMap();
-            List listColumnContex = new ArrayList();
-            for (ColumnDescription columnDescription : tableDescription.getColumnDescriptions()) {
-                listColumnContex.add(setColumnContex(columnDescription, pkIsOne));
-            }
-
-            if(!pkIsOne){
-//                listColumnContex.add(setAttrEntityEmbededId(tableDescription));
-            }
-
+            boolean pkIsOne = tableDescription.getMapPK() == null || tableDescription.getMapPK().size() == 0;
             String className = setNameClass(tableDescription.getTableName());
-            mapEntityContex.put("package", entityPackage);
-            mapEntityContex.put("import_parent", getListImportEntity(className));
-            mapEntityContex.put("table_name", tableDescription.getTableName());
-            mapEntityContex.put("data_list", listColumnContex);
-            mapEntityContex.put("class_name", className);
+            StringBuffer pkMultiple = new StringBuffer();
+
             tableDescription.setFileName(className + "Entity");
+            tableDescription.setFileNameEmbededId(className + "Id");
             tableDescription.setClassName(className);
-            tableDescription.setMapContex(mapEntityContex);
+            tableDescription.setMapContexEntityEmbededId(!pkIsOne ? getMapContexEntityEmbededId(tableDescription, className, pkMultiple) : null);
+            tableDescription.setMapContex(getMapContexEntity(tableDescription, className, pkIsOne, pkMultiple));
         }
     }
 
-    public String setColumnContex(ColumnDescription columnDescription, boolean pkIsOne) {
+    public Map getMapContexEntity(TableDescription tableDescription, String className, boolean pkIsOne, StringBuffer pkMultiple) {
+        Map mapEntityContex = new HashMap();
+        List listColumnContex = new ArrayList();
+        listColumnContex.add(pkMultiple);
+        for (ColumnDescription columnDescription : tableDescription.getColumnDescriptions()) {
+            String columnContex = setColumnContex(tableDescription, columnDescription, pkIsOne);
+            if (columnContex != null) listColumnContex.add(columnContex);
+        }
+        mapEntityContex.put("package", entityPackage);
+        mapEntityContex.put("import_parent", getListImportEntity(className));
+        mapEntityContex.put("table_name", tableDescription.getTableName());
+        mapEntityContex.put("data_list", listColumnContex);
+        mapEntityContex.put("class_name", className);
+        return mapEntityContex;
+    }
+
+    public Map getMapContexEntityEmbededId(TableDescription tableDescription, String className, StringBuffer pkMultiple) {
+        Map mapEntityEmbededIdContex = new HashMap();
+        List listColumnContex = new ArrayList();
+        for (Map.Entry<String, ColumnDescription> map : tableDescription.getMapPK().entrySet()) {
+            StringBuffer sb = new StringBuffer();
+            setAttrEntityEmbeded(sb, map.getValue());
+            if (sb != null && sb.toString() != null) listColumnContex.add(sb);
+        }
+        mapEntityEmbededIdContex.put("package", entityPackage);
+        mapEntityEmbededIdContex.put("import_parent", getListImportEntity(className));
+        mapEntityEmbededIdContex.put("table_name", tableDescription.getTableName());
+        mapEntityEmbededIdContex.put("data_list", listColumnContex);
+        mapEntityEmbededIdContex.put("class_name", className);
+        setAttrEntityEmbededId(pkMultiple, className);
+        return mapEntityEmbededIdContex;
+    }
+
+    public String setColumnContex(TableDescription tableDescription, ColumnDescription columnDescription, boolean pkIsOne) {
         if (columnDescription == null) {
             log.error("COLUMN DESC NULL");
-            throw new RuntimeException("COLUMN DESC NULL");
         }
-
         StringBuffer sb = new StringBuffer();
-        if (columnDescription.isPrimaryKey() && pkIsOne) {
-            setIdPkContex(sb, columnDescription);
-        } else {
-            setAttrEntityContex(sb, columnDescription);
+        if (!tableDescription.getMapPK().containsKey(columnDescription.getColumnName())) {
+            if (columnDescription.isPrimaryKey()) {
+                setIdPkContex(sb, columnDescription);
+            } else {
+                setAttrEntityContex(sb, columnDescription);
+            }
         }
         return sb.toString();
     }
@@ -211,23 +233,35 @@ public class GenerateEntityImpl implements GenerateEntity {
                 .append(";");
     }
 
-    public String setAttrEntityEmbededId(TableDescription tableDescription) {
-        StringBuffer sb = new StringBuffer();
+    public void setAttrEntityEmbeded(StringBuffer sb, ColumnDescription columnDescription) {
+        sb.append("     ").append("@Column(name = \"" + columnDescription.getColumnName() + "\" ")
+                .append(columnDescription.toString())
+                .append(")")
+                .append("\n");
+        sb.append("     ").append("private")
+                .append(" ")
+                .append(getTypeAttr(columnDescription.getDataType()))
+                .append(" ")
+                .append(setNameAttr(columnDescription.getColumnName()))
+                .append(";");
+    }
+
+    public void setAttrEntityEmbededId(StringBuffer sb, String className) {
         sb.append("     ").append("@EmbeddedId")
                 .append("\n");
         sb.append("     ").append("private")
                 .append(" ")
-                .append(typeAttrEmbededId(tableDescription.getClassName()))
+                .append(typeAttrEmbededId(className) + "Id")
                 .append(" ")
-                .append(nameAttrEmbededId(tableDescription.getClassName()))
+                .append(nameAttrEmbededId(className))
                 .append(";");
-        return sb.toString();
     }
 
-    public String typeAttrEmbededId(String input){
+    public String typeAttrEmbededId(String input) {
         return input.replace("Entity", "Id");
     }
-    public String nameAttrEmbededId(String input){
+
+    public String nameAttrEmbededId(String input) {
         input = input.replace("Entity", "Id");
         return input.substring(0, 1).toLowerCase() + input.substring(1);
     }

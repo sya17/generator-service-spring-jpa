@@ -7,13 +7,13 @@ import $item ;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 public class ${class_name}Service {
 
     private final ${class_name}Repository repository;
+    private final SpecificationUtil specificationUtil;
 
     public BaseResponse<List<${class_name}Response>> getAll(
             List<String> filters,
@@ -30,12 +31,12 @@ public class ${class_name}Service {
             Integer pageSize
     ) {
     Page<${class_name}Entity> pageResult = null;
-    Pageable pageable = PageRequest.of(pageIndex, pageSize);
+    Pageable pageable = PageRequest.of(pageIndex - 1, pageSize);
     if (filters != null && !filters.isEmpty()) {
         Specification<${class_name}Entity> spec = specificationUtil.buildSpecification(filters);
-        pageResult = ${class_name}Repository.findAll(spec, pageable);
+        pageResult = repository.findAll(spec, pageable);
     } else {
-        pageResult = ${class_name}Repository.findAll(pageable);
+        pageResult = repository.findAll(pageable);
     }
     List<${class_name}Response> dataList = new ArrayList<>();
     if (pageResult.getContent().isEmpty()) {
@@ -47,10 +48,10 @@ public class ${class_name}Service {
     }
     var data = BaseResponse.<List<${class_name}Response>>builder()
                         .timestamp(new Date())
-                        .data(pageResult.getContent().stream().collect(Collectors.toList()))
+                        .data(dataList)
                         .statusCode(HttpStatus.OK.value())
                         .message("Get Successs")
-                        .pageNo(page)
+                        .pageNo(pageIndex)
                         .pageRecords(pageResult.getSize())
                         .ttlPages(pageResult.getTotalPages())
                         .ttlRecords((int) pageResult.getTotalElements())
@@ -58,21 +59,25 @@ public class ${class_name}Service {
         return data;
     }
 
-    public BaseResponse<${class_name}Response> getById(${type_pk} id) {
-        ${class_name}Entity entity = this.repository.findById(id).orElse(null);
+    public BaseResponse<${class_name}Response> getById(
+    #foreach ($param in $list_param)
+        $param
+    #end
+    ) {
+        #if($list_param_value.size() > 1)
+        ${class_name}Id entityId = new ${class_name}Id(#foreach ($param in $list_param_value) $param #end);
+        ${class_name}Entity entity = this.repository.findById(entityId).orElse(null);
+        #else
+        ${class_name}Entity entity = this.repository.findById(#foreach ($param in $list_param_value) $param #end).orElse(null);
+        #end
         if (entity == null) {
-            throw new CommonApiException("Id " + id + " Not Found", HttpStatus.BAD_REQUEST);
+            throw new CommonApiException("Id Not Found", HttpStatus.BAD_REQUEST);
         }
         var data = BaseResponse.<${class_name}Response>builder()
                 .timestamp(new Date())
                 .data(new ${class_name}Response(entity))
                 .statusCode(HttpStatus.OK.value())
-                .error("")
-                .message("")
-                .pageNo(0)
-                .pageRecords(0)
-                .ttlPages(0)
-                .ttlRecords(0)
+                .message("Get Successs")
                 .build();
         return data;
     }
@@ -93,11 +98,20 @@ public class ${class_name}Service {
         }
     }
 
-    public BaseResponse<${class_name}Response> update(${class_name}Request request, ${type_pk} id) {
-        // find data
-        ${class_name}Entity entity = this.repository.findById(id).orElse(null);
+    public BaseResponse<${class_name}Response> update(
+        ${class_name}Request request,
+        #foreach ($param in $list_param)
+            $param
+        #end
+        ) {
+        #if($list_param_value.size() > 1)
+        ${class_name}Id entityId = new ${class_name}Id(#foreach ($param in $list_param_value) $param #end);
+        ${class_name}Entity entity = this.repository.findById(entityId).orElse(null);
+        #else
+        ${class_name}Entity entity = this.repository.findById(#foreach ($param in $list_param_value) $param #end).orElse(null);
+        #end
         if (entity == null) {
-            throw new CommonApiException("Id " + id + " not found", HttpStatus.BAD_REQUEST);
+            throw new CommonApiException("Id Not Found", HttpStatus.BAD_REQUEST);
         }
         // update data
         BeanUtils.copyProperties(request, entity);

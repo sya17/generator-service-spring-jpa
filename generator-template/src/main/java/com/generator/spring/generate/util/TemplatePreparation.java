@@ -1,15 +1,12 @@
 package com.generator.spring.generate.util;
 
-import com.generator.spring.generate.template.TableInformation;
 import com.generator.spring.generate.template.TemplateProperties;
 import com.generator.spring.generate.template.seed.ColumnDescription;
 import com.generator.spring.generate.template.seed.TableDescription;
-import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 
 import java.util.List;
-import java.util.Map;
 
 public interface TemplatePreparation {
 
@@ -19,15 +16,16 @@ public interface TemplatePreparation {
 
     public TemplateProperties generateTemplatePropertiesEntityEmbededId(TableDescription tableDescription);
 
-    public List<TemplateProperties> generateTemplatePropertiesDTO(String nameClass, String tableName);
+    public List<TemplateProperties> generateTemplatePropertiesDTO(String nameClass, String tableName, TableDescription tableDescription);
 
-    public TemplateProperties generateTemplatePropertiesRepository(String nameClass, List<ColumnDescription> columnDescriptions);
+    //    public TemplateProperties generateTemplatePropertiesRepository(String nameClass, List<ColumnDescription> columnDescriptions);
+    public TemplateProperties generateTemplatePropertiesRepository(String nameClass, TableDescription tableDescription);
 
-    public TemplateProperties generateTemplatePropertiesService(String nameClass, List<ColumnDescription> columnDescriptions);
+    public TemplateProperties generateTemplatePropertiesService(String nameClass, TableDescription tableDescription);
 
     public TemplateProperties generateTemplatePropertiesServiceImpl(String nameClass);
 
-    public TemplateProperties generateTemplatePropertiesController(String nameClass, List<ColumnDescription> columnDescriptions);
+    public TemplateProperties generateTemplatePropertiesController(String nameClass, TableDescription tableDescription);
 
     public TemplateProperties generateTemplatePropertiesDDL(List<TableDescription> listTable);
 

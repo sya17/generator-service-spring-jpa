@@ -17,10 +17,12 @@ import java.util.Map;
 public class TableDescription {
     private String tableName;
     private String fileName;
+    private String fileNameEmbededId;
     private String className;
     private Map mapContex;
     private Map mapContexEntityEmbededId;
     private List<ColumnDescription> columnDescriptions = new ArrayList<>();
+//    private List<ColumnDescription> columnDescriptionsEmbededId = new ArrayList<>();
     private Map<String, ColumnDescription> mapPK = new HashMap<>();
 
     public void addColumnDescription(ColumnDescription columnDescription) {

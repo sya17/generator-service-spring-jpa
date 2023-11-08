@@ -2,13 +2,17 @@ package ${package} ;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Embeddable
+@Builder
 public class ${class_name}Id implements Serializable {
 #foreach ($item in $data_list)
 

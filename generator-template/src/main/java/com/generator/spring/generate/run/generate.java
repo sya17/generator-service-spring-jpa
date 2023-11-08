@@ -44,11 +44,12 @@ public class generate implements CommandLineRunner {
                 log.trace("GENERATE TABLE SEED {}", nameTable);
 
                 generateTemplate.generate(templatePreparation.generateTemplatePropertiesEntity(tableDescription));
-                generateTemplate.generates(templatePreparation.generateTemplatePropertiesDTO(nameClass, nameTable));
-                generateTemplate.generate(templatePreparation.generateTemplatePropertiesRepository(nameClass, tableDescription.getColumnDescriptions()));
-                generateTemplate.generate(templatePreparation.generateTemplatePropertiesService(nameClass, tableDescription.getColumnDescriptions()));
+                generateTemplate.generate(templatePreparation.generateTemplatePropertiesEntityEmbededId(tableDescription));
+                generateTemplate.generates(templatePreparation.generateTemplatePropertiesDTO(nameClass, nameTable, tableDescription));
+                generateTemplate.generate(templatePreparation.generateTemplatePropertiesRepository(nameClass, tableDescription));
+                generateTemplate.generate(templatePreparation.generateTemplatePropertiesService(nameClass, tableDescription));
 //                generateTemplate.generate(templatePreparation.generateTemplatePropertiesServiceImpl(nameClass));
-                generateTemplate.generate(templatePreparation.generateTemplatePropertiesController(nameClass, tableDescription.getColumnDescriptions()));
+                generateTemplate.generate(templatePreparation.generateTemplatePropertiesController(nameClass, tableDescription));
 //                generateTemplate.generate(templatePreparation.generateTemplatePropertiesDDL(tableDescription));
             }
 //            generateTemplate.generate(templatePreparation.generateTemplatePropertiesDDL(listTable));

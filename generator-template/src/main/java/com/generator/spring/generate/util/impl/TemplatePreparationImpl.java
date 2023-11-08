@@ -1,7 +1,5 @@
 package com.generator.spring.generate.util.impl;
 
-import com.generator.spring.generate.template.ColumnInformation;
-import com.generator.spring.generate.template.TableInformation;
 import com.generator.spring.generate.template.TemplateProperties;
 import com.generator.spring.generate.template.seed.ColumnDescription;
 import com.generator.spring.generate.template.seed.TableDescription;
@@ -16,15 +14,11 @@ import org.apache.velocity.app.VelocityEngine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -48,6 +42,9 @@ public class TemplatePreparationImpl implements TemplatePreparation {
     private String projectPath;
     @Value("${gen.spring.path.module}")
     private String moduleName;
+
+    @Value("${gen.spring.package.base}")
+    private String basePackage;
 
     @Value("${gen.spring.package.model}")
     private String modelPackageParent;
@@ -106,16 +103,18 @@ public class TemplatePreparationImpl implements TemplatePreparation {
 
     @Override
     public TemplateProperties generateTemplatePropertiesEntityEmbededId(TableDescription tableDescription) {
-        return generateTemplateProperties(entityEmbededIdTempName, entityPackage, tableDescription.getFileName(), generateContex(tableDescription.getMapContex()));
+        if (tableDescription.getMapContexEntityEmbededId() == null || tableDescription.getMapContexEntityEmbededId().size() == 0)
+            return null;
+        return generateTemplateProperties(entityEmbededIdTempName, entityPackage, tableDescription.getFileNameEmbededId(), generateContex(tableDescription.getMapContexEntityEmbededId()));
     }
 
     @Override
-    public List<TemplateProperties> generateTemplatePropertiesDTO(String className, String tableName) {
+    public List<TemplateProperties> generateTemplatePropertiesDTO(String className, String tableName, TableDescription tableDescription) {
         List<TemplateProperties> list = new ArrayList<>();
         List listAttr = null;
         try {
             String entityName = className + "Entity";
-            listAttr = generateAttrDTOByEntity(pathJoinPackage(entityPackage, entityName), entityName);
+            listAttr = generateAttrDTOByEntity(pathJoinPackage(entityPackage, entityName), entityName, tableDescription);
         } catch (IOException e) {
             log.error("generateAttrDTOByEntity");
 //            e.printStackTrace();
@@ -147,23 +146,29 @@ public class TemplatePreparationImpl implements TemplatePreparation {
     }
 
     @Override
-    public TemplateProperties generateTemplatePropertiesRepository(String nameClass, List<ColumnDescription> columnDescriptions) {
+//    public TemplateProperties generateTemplatePropertiesRepository(String nameClass, List<ColumnDescription> columnDescriptions) {
+    public TemplateProperties generateTemplatePropertiesRepository(String nameClass, TableDescription tableDescription) {
         String fileGenerated = nameClass + "Repository";
+        Map mapContex = new HashMap();
 
         List listImportParent = new ArrayList();
         listImportParent.add(entityPackage + "." + nameClass + "Entity");
+        if (pkIsOne(tableDescription)) {
+            setStaticContexByColumnDesc(mapContex, tableDescription.getColumnDescriptions());
+        } else {
+            listImportParent.add(entityPackage + "." + nameClass + "Id");
+            mapContex.put("type_pk", tableDescription.getClassName() + "Id");
+        }
 
-        Map mapContex = new HashMap();
         mapContex.put("package", repositoryPackage);
         mapContex.put("import_parent", listImportParent);
         mapContex.put("class_name", nameClass);
-        setStaticContexByColumnDesc(mapContex, columnDescriptions);
 
         return generateTemplateProperties(repositoryTempName, repositoryPackage, fileGenerated, generateContex(mapContex));
     }
 
     @Override
-    public TemplateProperties generateTemplatePropertiesService(String nameClass, List<ColumnDescription> columnDescriptions) {
+    public TemplateProperties generateTemplatePropertiesService(String nameClass, TableDescription tableDescription) {
         String fileGenerated = nameClass + "Service";
 
 //        List listImportParent = new ArrayList();
@@ -173,6 +178,7 @@ public class TemplatePreparationImpl implements TemplatePreparation {
 //
         List listImportParent = new ArrayList();
         listImportParent.add(entityPackage + "." + nameClass + "Entity");
+        if (!pkIsOne(tableDescription)) listImportParent.add(entityPackage + "." + nameClass + "Id");
         listImportParent.add(repositoryPackage + "." + nameClass + "Repository");
         listImportParent.add(dtoRequestPackage + "." + nameClass + "Request");
         listImportParent.add(dtoResponsePackage + "." + nameClass + "Response");
@@ -182,7 +188,9 @@ public class TemplatePreparationImpl implements TemplatePreparation {
         mapContex.put("package", servicePackage);
         mapContex.put("import_parent", listImportParent);
         mapContex.put("class_name", nameClass);
-        setStaticContexByColumnDesc(mapContex, columnDescriptions);
+        setStaticContexByColumnDesc(mapContex, tableDescription.getColumnDescriptions());
+        mapContex.put("list_param", getListParamService(tableDescription));
+        mapContex.put("list_param_value", getListParamValueService(tableDescription));
 
         return generateTemplateProperties(serviceTempName, servicePackage, fileGenerated, generateContex(mapContex));
     }
@@ -208,7 +216,7 @@ public class TemplatePreparationImpl implements TemplatePreparation {
     }
 
     @Override
-    public TemplateProperties generateTemplatePropertiesController(String nameClass, List<ColumnDescription> columnDescriptions) {
+    public TemplateProperties generateTemplatePropertiesController(String nameClass, TableDescription tableDescription) {
         String fileGenerated = nameClass + "Controller";
 
         List listImportParent = new ArrayList();
@@ -221,7 +229,10 @@ public class TemplatePreparationImpl implements TemplatePreparation {
         mapContex.put("import_parent", listImportParent);
         mapContex.put("class_name", nameClass);
         mapContex.put("path_api", "/api/v1/" + nameClass.replaceAll("(.)([A-Z])", "$1_$2").toLowerCase());
-        setStaticContexByColumnDesc(mapContex, columnDescriptions);
+        setStaticContexByColumnDesc(mapContex, tableDescription.getColumnDescriptions());
+        mapContex.put("list_param", getListParamController(tableDescription));
+        mapContex.put("list_param_value", getListParamValueController(tableDescription));
+        mapContex.put("list_param_path", getListParamPathController(tableDescription));
 
         return generateTemplateProperties(controllerTempName, controllerPackage, fileGenerated, generateContex(mapContex));
     }
@@ -323,18 +334,18 @@ public class TemplatePreparationImpl implements TemplatePreparation {
 
     public VelocityContext generateContex(Map<String, Object> map) {
 //        log.info("--- generateContex");
-        if (map == null) {
-            throw new RuntimeException("Map Kosong !!!");
-        }
-
-        setStaticContex(map); // static value
-
         VelocityContext context = new VelocityContext();
-        for (Map.Entry<String, Object> param : map.entrySet()) {
-            String key = param.getKey();
-            context.put(key, param.getValue());
-        }
+        if (map == null) {
+            log.error("Map Kosong !!!");
+        } else {
+            setStaticContex(map); // static value
+
+            for (Map.Entry<String, Object> param : map.entrySet()) {
+                String key = param.getKey();
+                context.put(key, param.getValue());
+            }
 //        log.info("--- generateContex");
+        }
         return context;
     }
 
@@ -375,27 +386,52 @@ public class TemplatePreparationImpl implements TemplatePreparation {
 //        return listAttr;
 //    }
 
-    public List generateAttrDTOByEntity(String fileName, String entityClassName) throws IOException, ClassNotFoundException {
+    public List generateAttrDTOByEntity(String fileName, String entityClassName, TableDescription tableDescription) throws IOException, ClassNotFoundException {
         List listAttr = new ArrayList();
         File javaFile = new File(fileName);
         List<Map> fieldNames = getFieldNamesFromFile(javaFile, entityClassName);
+        Map mapEmbededSet = new HashMap();
         for (Map map : fieldNames) {
-//            System.out.println(map);
-            StringBuffer attr = new StringBuffer();
-            attr.append("private");
-            attr.append(" ");
-            attr.append((String) map.get("type"));
-            attr.append(" ");
-            attr.append(replaceAttrName((String) map.get("name")));
-            attr.append(";");
-            listAttr.add(attr.toString());
+            String nameEntityEmbededId = tableDescription.getClassName() + "Id";
+            String type = (String) map.get("type");
+
+            if (nameEntityEmbededId.equalsIgnoreCase(type)) {
+                fileName = pathJoinPackage(entityPackage, nameEntityEmbededId);
+                javaFile = new File(fileName);
+                fieldNames = getFieldNamesFromFile(javaFile, nameEntityEmbededId);
+                for (Map map2 : fieldNames) {
+                    StringBuffer attr = new StringBuffer();
+                    if (mapEmbededSet.containsKey(map2.get("name"))) {
+                        continue;
+                    }
+                    type = (String) map2.get("type");
+                    attr.append("private");
+                    attr.append(" ");
+                    attr.append(type);
+                    attr.append(" ");
+                    attr.append(replaceAttrName((String) map2.get("name")));
+                    attr.append(";");
+                    listAttr.add(attr.toString());
+
+                    mapEmbededSet.put(map2.get("name"), map2.get("name"));
+                }
+            } else {
+                StringBuffer attr = new StringBuffer();
+                attr.append("private");
+                attr.append(" ");
+                attr.append(type);
+                attr.append(" ");
+                attr.append(replaceAttrName((String) map.get("name")));
+                attr.append(";");
+                listAttr.add(attr.toString());
+            }
         }
         return listAttr;
     }
 
     public List<Map> getFieldNamesFromFile(File javaFile, String entityClassName) throws IOException, ClassNotFoundException {
         List<Map> fieldNames = new ArrayList<>();
-        String fileContent = new String(Files.readAllBytes(javaFile.toPath()));
+        String fileContent = new String(Files.readAllBytes(javaFile.toPath())).replace("implements Serializable", "");
 
         // Cari kelas entity dalam file
         String regex = "class\\s+" + entityClassName + "\\s*\\{([^}]+)\\}";
@@ -456,6 +492,7 @@ public class TemplatePreparationImpl implements TemplatePreparation {
 //        list.add("com.test.generate.exception.CommonApiException");
 //        list.add(dtoRequestPackage + ".PageFilterRequest");
         list.add(dtoResponsePackage + ".BaseResponse");
+        list.add(basePackage + ".util.SpecificationUtil");
         list.add("com.fincoreplus.baseservice.exception.CommonApiException");
     }
 
@@ -474,5 +511,167 @@ public class TemplatePreparationImpl implements TemplatePreparation {
                 javaSourceFolder + "/" +
                 packagePath + "/" +
                 classNameGenerated;
+    }
+
+    public boolean pkIsOne(TableDescription tableDescription) {
+        return tableDescription.getMapPK() == null || tableDescription.getMapPK().size() == 0;
+    }
+
+    public List getListParamService(TableDescription tableDescription) {
+        List listParam = new ArrayList();
+        if (!pkIsOne(tableDescription)) {
+            int count = 0;
+            for (Map.Entry<String, ColumnDescription> map : tableDescription.getMapPK().entrySet()) {
+                StringBuffer sb = new StringBuffer();
+                ColumnDescription columnDescription = map.getValue();
+                if (columnDescription != null) {
+                    sb.append(generateEntity.getTypeAttr(columnDescription.getDataType()));
+                    sb.append(" ");
+                    sb.append(generateEntity.setNameAttr(columnDescription.getColumnName()));
+                    if (count < tableDescription.getMapPK().size() - 1) sb.append(",");
+                    count++;
+                    listParam.add(sb.toString());
+                }
+            }
+        } else {
+            for (ColumnDescription columnDescription : tableDescription.getColumnDescriptions()) {
+                if (columnDescription.isPrimaryKey()) {
+                    StringBuffer sb = new StringBuffer();
+                    sb.append(generateEntity.getTypeAttr(columnDescription.getDataType()));
+                    sb.append(" ");
+                    sb.append(generateEntity.setNameAttr(columnDescription.getColumnName()));
+                    listParam.add(sb.toString());
+
+                }
+            }
+        }
+        return listParam;
+    }
+
+    public List getListParamValueService(TableDescription tableDescription) {
+        List listParam = new ArrayList();
+        if (!pkIsOne(tableDescription)) {
+            int count = 0;
+            for (Map.Entry<String, ColumnDescription> map : tableDescription.getMapPK().entrySet()) {
+                StringBuffer sb = new StringBuffer();
+                ColumnDescription columnDescription = map.getValue();
+                if (columnDescription != null) {
+                    sb.append(generateEntity.setNameAttr(columnDescription.getColumnName()));
+                    if (count < tableDescription.getMapPK().size() - 1) sb.append(",");
+                    count++;
+                    listParam.add(sb.toString());
+                }
+            }
+        } else {
+            for (ColumnDescription columnDescription : tableDescription.getColumnDescriptions()) {
+                if (columnDescription.isPrimaryKey()) {
+                    StringBuffer sb = new StringBuffer();
+                    sb.append(generateEntity.setNameAttr(columnDescription.getColumnName()));
+                    listParam.add(sb.toString());
+
+                }
+            }
+        }
+        return listParam;
+    }
+
+    public List getListParamController(TableDescription tableDescription) {
+        List listParam = new ArrayList();
+        if (!pkIsOne(tableDescription)) {
+            int count = 0;
+            for (Map.Entry<String, ColumnDescription> map : tableDescription.getMapPK().entrySet()) {
+                StringBuffer sb = new StringBuffer();
+                ColumnDescription columnDescription = map.getValue();
+                if (columnDescription != null) {
+                    sb.append("@PathVariable(\"");
+                    sb.append(columnDescription.getColumnName());
+                    sb.append("\")");
+                    sb.append(" ");
+                    sb.append(generateEntity.getTypeAttr(columnDescription.getDataType()));
+                    sb.append(" ");
+                    sb.append(generateEntity.setNameAttr(columnDescription.getColumnName()));
+                    if (count < tableDescription.getMapPK().size() - 1) sb.append(",");
+                    count++;
+                    listParam.add(sb.toString());
+                }
+            }
+        } else {
+            for (ColumnDescription columnDescription : tableDescription.getColumnDescriptions()) {
+                if (columnDescription.isPrimaryKey()) {
+                    StringBuffer sb = new StringBuffer();
+                    sb.append("@PathVariable(\"");
+                    sb.append(columnDescription.getColumnName());
+                    sb.append("\")");
+                    sb.append(" ");
+                    sb.append(generateEntity.getTypeAttr(columnDescription.getDataType()));
+                    sb.append(" ");
+                    sb.append(generateEntity.setNameAttr(columnDescription.getColumnName()));
+                    listParam.add(sb.toString());
+
+                }
+            }
+        }
+        return listParam;
+    }
+
+    public List getListParamValueController(TableDescription tableDescription) {
+        List listParam = new ArrayList();
+        if (!pkIsOne(tableDescription)) {
+            int count = 0;
+            for (Map.Entry<String, ColumnDescription> map : tableDescription.getMapPK().entrySet()) {
+                StringBuffer sb = new StringBuffer();
+                ColumnDescription columnDescription = map.getValue();
+                if (columnDescription != null) {
+                    sb.append(generateEntity.setNameAttr(columnDescription.getColumnName()));
+                    if (count < tableDescription.getMapPK().size() - 1) sb.append(",");
+                    count++;
+                    listParam.add(sb.toString());
+                }
+            }
+        } else {
+            for (ColumnDescription columnDescription : tableDescription.getColumnDescriptions()) {
+                if (columnDescription.isPrimaryKey()) {
+                    StringBuffer sb = new StringBuffer();
+                    sb.append(generateEntity.setNameAttr(columnDescription.getColumnName()));
+                    listParam.add(sb.toString());
+
+                }
+            }
+        }
+        return listParam;
+    }
+
+    public List getListParamPathController(TableDescription tableDescription) {
+        List listParam = new ArrayList();
+        if (!pkIsOne(tableDescription)) {
+            int count = 0;
+            for (Map.Entry<String, ColumnDescription> map : tableDescription.getMapPK().entrySet()) {
+                StringBuffer sb = new StringBuffer();
+                ColumnDescription columnDescription = map.getValue();
+                if (columnDescription != null) {
+                    if (count > 0) sb.append(generateEntity.setNameAttr(columnDescription.getColumnName()));
+                    sb.append("/");
+                    sb.append("{");
+                    sb.append(columnDescription.getColumnName());
+                    sb.append("}");
+                    if (count < tableDescription.getMapPK().size() - 1) sb.append("/");
+                    count++;
+                    listParam.add(sb.toString());
+                }
+            }
+        } else {
+            for (ColumnDescription columnDescription : tableDescription.getColumnDescriptions()) {
+                if (columnDescription.isPrimaryKey()) {
+                    StringBuffer sb = new StringBuffer();
+                    sb.append("/");
+                    sb.append("{");
+                    sb.append(columnDescription.getColumnName());
+                    sb.append("}");
+                    listParam.add(sb.toString());
+
+                }
+            }
+        }
+        return listParam;
     }
 }

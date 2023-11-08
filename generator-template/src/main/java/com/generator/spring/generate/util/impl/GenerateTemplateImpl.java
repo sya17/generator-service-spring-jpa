@@ -62,25 +62,25 @@ public class GenerateTemplateImpl implements GenerateTemplate {
     public void generate(TemplateProperties templateProperties) {
         if (templateProperties == null) {
             log.error("TEMPLATE PROPERTIES NULL");
-            throw new RuntimeException("TEMPLATE PROPERTIES NULL");
-        }
-
-        File fileClass = getFileGenerate(templateProperties);
-        if (fileClass != null) {
-            Writer writer = null;
-            try {
-                writer = new FileWriter(fileClass);
-                Velocity.mergeTemplate(templateProperties.getTemplatePath(), "UTF-8", templateProperties.getContex(), writer);
-                writer.flush();
-                writer.close();
-                logGenerate(templateProperties, "SUCESS");
-            } catch (IOException e) {
-                logGenerate(templateProperties, "ERROR");
-                log.error(e.getMessage());
-                e.printStackTrace();
-            }
+//            throw new RuntimeException("TEMPLATE PROPERTIES NULL");
         } else {
-            log.error("FILE NULL");
+            File fileClass = getFileGenerate(templateProperties);
+            if (fileClass != null) {
+                Writer writer = null;
+                try {
+                    writer = new FileWriter(fileClass);
+                    Velocity.mergeTemplate(templateProperties.getTemplatePath(), "UTF-8", templateProperties.getContex(), writer);
+                    writer.flush();
+                    writer.close();
+                    logGenerate(templateProperties, "SUCESS");
+                } catch (IOException e) {
+                    logGenerate(templateProperties, "ERROR");
+                    log.error(e.getMessage());
+                    e.printStackTrace();
+                }
+            } else {
+                log.error("FILE NULL");
+            }
         }
     }
 

@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("${path_api}")
@@ -51,11 +53,11 @@ public class ${class_name}Controller {
             @Parameter(description = "page size")
             @RequestParam(name = "size", defaultValue = "20") @PositiveOrZero Integer size
     ) {
-        var result = this.service.getAll(page, size);
+        var result = this.service.getAll(filters, page, size);
         return new ResponseEntity<BaseResponse>(result, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("#foreach($param in $list_param_path)$param#end")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
                     description = "Get Success",
@@ -74,8 +76,12 @@ public class ${class_name}Controller {
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = BaseResponse.class))})
     })
-    public ResponseEntity<BaseResponse> getById(@PathVariable("id") ${type_pk} id) {
-        var result = this.service.getById(id);
+    public ResponseEntity<BaseResponse> getById(
+        #foreach ($param in $list_param)
+            $param
+        #end
+        ) {
+        var result = this.service.getById(#foreach ($param in $list_param_value) $param #end);
         return new ResponseEntity<BaseResponse>(result, HttpStatus.OK);
     }
 
@@ -103,7 +109,7 @@ public class ${class_name}Controller {
         return new ResponseEntity<BaseResponse>(result, HttpStatus.CREATED);
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("#foreach($param in $list_param_path)$param#end")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
                     description = "Updated Success",
@@ -122,9 +128,13 @@ public class ${class_name}Controller {
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = BaseResponse.class))})
     })
-    public ResponseEntity<BaseResponse> update(@RequestBody @Valid ${class_name}Request request,
-                                               @PathVariable("id") ${type_pk} id) {
-        var result = this.service.update(request, id);
+    public ResponseEntity<BaseResponse> update(
+                @RequestBody @Valid ${class_name}Request request,
+            #foreach ($param in $list_param)
+                $param
+            #end
+            ) {
+        var result = this.service.update(request, #foreach ($param in $list_param_value) $param #end);
         return new ResponseEntity<BaseResponse>(result, HttpStatus.OK);
     }
 
