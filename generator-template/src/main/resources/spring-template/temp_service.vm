@@ -24,26 +24,28 @@ public class ${class_name}Service {
 
     private final ${class_name}Repository repository;
 
-    private Page<${class_name}Response> get${class_name}Responses(Pageable pageable) {
-        Page<${class_name}Entity> result = this.repository.findAll(pageable);
-
-        if (result.getContent().isEmpty()) {
-            return new PageImpl<>(Collections.emptyList(), pageable, 0);
-        }
-        List<${class_name}Response> responses = result.getContent().stream()
-                .map(${class_name}Response::new)
-                .collect(Collectors.toList());
-
-        return new PageImpl<>(responses, pageable, responses.size());
-    }
-
     public BaseResponse<List<${class_name}Response>> getAll(
+            List<String> filters,
             Integer page,
             Integer size
     ) {
-        Pageable pageable = PageRequest.of(page - 1, size);
-        Page<${class_name}Response> pageResult = get${class_name}Responses(pageable);
-        var data = BaseResponse.<List<${class_name}Response>>builder()
+    Page<${class_name}Entity> pageResult = null;
+    Pageable pageable = PageRequest.of(pageIndex, pageSize);
+    if (filters != null && !filters.isEmpty()) {
+        Specification<${class_name}Entity> spec = specificationUtil.buildSpecification(filters);
+        pageResult = ${class_name}Repository.findAll(spec, pageable);
+    } else {
+        pageResult = ${class_name}Repository.findAll(pageable);
+    }
+    List<${class_name}Response> dataList = new ArrayList<>();
+    if (pageResult.getContent().isEmpty()) {
+        dataList = null;
+    } else {
+        dataList = pageResult.getContent().stream()
+            .map(${class_name}Response::new)
+            .collect(Collectors.toList());
+    }
+    var data = BaseResponse.<List<${class_name}Response>>builder()
                         .timestamp(new Date())
                         .data(pageResult.getContent().stream().collect(Collectors.toList()))
                         .statusCode(HttpStatus.OK.value())

@@ -44,6 +44,8 @@ public class ${class_name}Controller {
                             schema = @Schema(implementation = BaseResponse.class))})
     })
     public ResponseEntity<BaseResponse> getAll(
+            @Parameter(description = "Filter example column_name OPERATOR value")
+            @RequestParam(value = "filter", required = false) List<String> filters,
             @Parameter(description = "1-based page index (1..N)")
             @RequestParam(name = "page", defaultValue = "1") @PositiveOrZero Integer page,
             @Parameter(description = "page size")
