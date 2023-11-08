@@ -143,7 +143,7 @@ public class GenerateEntityImpl implements GenerateEntity {
             }
 
             if(!pkIsOne){
-                listColumnContex.add(setAttrEntityEmbededId(tableDescription));
+//                listColumnContex.add(setAttrEntityEmbededId(tableDescription));
             }
 
             String className = setNameClass(tableDescription.getTableName());
