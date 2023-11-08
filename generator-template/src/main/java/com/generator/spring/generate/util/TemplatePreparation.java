@@ -17,6 +17,8 @@ public interface TemplatePreparation {
 
     public TemplateProperties generateTemplatePropertiesEntity(TableDescription tableDescription);
 
+    public TemplateProperties generateTemplatePropertiesEntityEmbededId(TableDescription tableDescription);
+
     public List<TemplateProperties> generateTemplatePropertiesDTO(String nameClass, String tableName);
 
     public TemplateProperties generateTemplatePropertiesRepository(String nameClass, List<ColumnDescription> columnDescriptions);

@@ -82,6 +82,8 @@ public class TemplatePreparationImpl implements TemplatePreparation {
     private String controllerTempName;
     @Value("${gen.spring.name.template.flyway-ddl}")
     private String flywayDDLTempName;
+    @Value("${gen.spring.name.template.entity-id}")
+    private String entityEmbededIdTempName;
 
     @Value("${gen.spring.path.flyway-ddl}")
     private String flywayDllPath;
@@ -100,6 +102,11 @@ public class TemplatePreparationImpl implements TemplatePreparation {
     @Override
     public TemplateProperties generateTemplatePropertiesEntity(TableDescription tableDescription) {
         return generateTemplateProperties(entityTempName, entityPackage, tableDescription.getFileName(), generateContex(tableDescription.getMapContex()));
+    }
+
+    @Override
+    public TemplateProperties generateTemplatePropertiesEntityEmbededId(TableDescription tableDescription) {
+        return generateTemplateProperties(entityEmbededIdTempName, entityPackage, tableDescription.getFileName(), generateContex(tableDescription.getMapContex()));
     }
 
     @Override

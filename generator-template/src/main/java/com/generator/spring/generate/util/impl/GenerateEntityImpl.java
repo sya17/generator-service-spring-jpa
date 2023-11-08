@@ -86,6 +86,18 @@ public class GenerateEntityImpl implements GenerateEntity {
                     continue;
                 }
 
+                if (line.startsWith("#PK")) {
+                    String[] listPk = line.split(",");
+                    if (listPk.length > 0) {
+
+                        for (String pk : listPk) {
+                            Map<String, ColumnDescription> mapPk = new HashMap<>();
+                            mapPk.put(pk, null);
+                            currentTableDescription.setMapPK(mapPk);
+                        }
+                    }
+                }
+
                 if (currentTableDescription != null) {
                     String[] parts = line.split(",");
                     if (parts.length == 8) {
@@ -99,6 +111,11 @@ public class GenerateEntityImpl implements GenerateEntity {
                                 parts[6].trim(),
                                 parts[7].trim().equals("Y")
                         );
+                        if (currentTableDescription.getMapPK().containsKey(parts[0].trim())) {
+                            Map<String, ColumnDescription> mapPk = currentTableDescription.getMapPK();
+                            mapPk.put(parts[0].trim(), columnDescription);
+                            currentTableDescription.setMapPK(mapPk);
+                        }
                         currentTableDescription.addColumnDescription(columnDescription);
                     }
                 }
@@ -118,10 +135,15 @@ public class GenerateEntityImpl implements GenerateEntity {
         }
 
         for (TableDescription tableDescription : listTD) {
+            boolean pkIsOne = tableDescription.getMapPK() == null && tableDescription.getMapPK().size() == 0;
             Map mapEntityContex = new HashMap();
             List listColumnContex = new ArrayList();
             for (ColumnDescription columnDescription : tableDescription.getColumnDescriptions()) {
-                listColumnContex.add(setColumnContex(columnDescription));
+                listColumnContex.add(setColumnContex(columnDescription, pkIsOne));
+            }
+
+            if(!pkIsOne){
+                listColumnContex.add(setAttrEntityEmbededId(tableDescription));
             }
 
             String className = setNameClass(tableDescription.getTableName());
@@ -136,14 +158,14 @@ public class GenerateEntityImpl implements GenerateEntity {
         }
     }
 
-    public String setColumnContex(ColumnDescription columnDescription) {
+    public String setColumnContex(ColumnDescription columnDescription, boolean pkIsOne) {
         if (columnDescription == null) {
             log.error("COLUMN DESC NULL");
             throw new RuntimeException("COLUMN DESC NULL");
         }
 
         StringBuffer sb = new StringBuffer();
-        if (columnDescription.isPrimaryKey()) {
+        if (columnDescription.isPrimaryKey() && pkIsOne) {
             setIdPkContex(sb, columnDescription);
         } else {
             setAttrEntityContex(sb, columnDescription);
@@ -161,6 +183,10 @@ public class GenerateEntityImpl implements GenerateEntity {
                 setAttrEntityContex(sb, columnDescription);
                 break;
             case "varchar":
+                sb.append(" ").append("@Id").append("\n");
+                setAttrEntityContex(sb, columnDescription);
+                break;
+            case "serial4":
                 sb.append(" ").append("@Id").append("\n");
                 setAttrEntityContex(sb, columnDescription);
                 break;
@@ -184,6 +210,28 @@ public class GenerateEntityImpl implements GenerateEntity {
                 .append(setNameAttr(columnDescription.getColumnName()))
                 .append(";");
     }
+
+    public String setAttrEntityEmbededId(TableDescription tableDescription) {
+        StringBuffer sb = new StringBuffer();
+        sb.append("     ").append("@EmbeddedId")
+                .append("\n");
+        sb.append("     ").append("private")
+                .append(" ")
+                .append(typeAttrEmbededId(tableDescription.getClassName()))
+                .append(" ")
+                .append(nameAttrEmbededId(tableDescription.getClassName()))
+                .append(";");
+        return sb.toString();
+    }
+
+    public String typeAttrEmbededId(String input){
+        return input.replace("Entity", "Id");
+    }
+    public String nameAttrEmbededId(String input){
+        input = input.replace("Entity", "Id");
+        return input.substring(0, 1).toLowerCase() + input.substring(1);
+    }
+
 
     public String getTypeAttr(String type) {
         switch (type.toLowerCase()) {
