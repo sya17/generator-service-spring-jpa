@@ -26,8 +26,8 @@ public class ${class_name}Service {
 
     public BaseResponse<List<${class_name}Response>> getAll(
             List<String> filters,
-            Integer page,
-            Integer size
+            Integer pageIndex,
+            Integer pageSize
     ) {
     Page<${class_name}Entity> pageResult = null;
     Pageable pageable = PageRequest.of(pageIndex, pageSize);
