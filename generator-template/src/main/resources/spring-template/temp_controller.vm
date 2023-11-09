@@ -3,6 +3,7 @@ package ${package};
 #foreach ($item in $import_parent)
 import $item ;
 #end
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
