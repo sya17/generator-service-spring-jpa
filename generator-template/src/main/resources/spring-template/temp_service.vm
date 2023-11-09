@@ -92,7 +92,7 @@ public class ${class_name}Service {
                     .timestamp(new Date())
                     .data(new ${class_name}Response(entity))
                     .statusCode(HttpStatus.OK.value())
-                    .message("Get Successs")
+                    .message("Save Successs")
                     .build();
             return data;
         } catch (Exception e) {
