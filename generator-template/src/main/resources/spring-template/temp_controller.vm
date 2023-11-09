@@ -28,6 +28,7 @@ public class ${class_name}Controller {
 
     private final ${class_name}Service ${className}service;
 
+    @Operation(summary = "Get All ${class_name}")
     @GetMapping
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
@@ -59,6 +60,7 @@ public class ${class_name}Controller {
         return new ResponseEntity<BaseResponse>(result, HttpStatus.OK);
     }
 
+    @Operation(summary = "Get By Id ${class_name}")
     @GetMapping("#foreach($param in $list_param_path)$param#end")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
@@ -87,6 +89,7 @@ public class ${class_name}Controller {
         return new ResponseEntity<BaseResponse>(result, HttpStatus.OK);
     }
 
+    @Operation(summary = "Save ${class_name}")
     @PostMapping
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201",
@@ -111,6 +114,7 @@ public class ${class_name}Controller {
         return new ResponseEntity<BaseResponse>(result, HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Update ${class_name}")
     @PatchMapping("#foreach($param in $list_param_path)$param#end")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200",
