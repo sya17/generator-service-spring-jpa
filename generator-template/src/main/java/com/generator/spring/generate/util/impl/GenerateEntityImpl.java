@@ -206,10 +206,12 @@ public class GenerateEntityImpl implements GenerateEntity {
                 break;
             case "varchar":
                 sb.append(" ").append("@Id").append("\n");
+                sb.append(" ").append("@GeneratedValue(strategy = GenerationType.IDENTITY)").append("\n");
                 setAttrEntityContex(sb, columnDescription);
                 break;
             case "serial4":
                 sb.append(" ").append("@Id").append("\n");
+                sb.append("     ").append("@GeneratedValue(strategy = GenerationType.IDENTITY)").append("\n");
                 setAttrEntityContex(sb, columnDescription);
                 break;
             default:
