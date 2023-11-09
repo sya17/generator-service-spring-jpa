@@ -98,14 +98,14 @@ public class TemplatePreparationImpl implements TemplatePreparation {
 
     @Override
     public TemplateProperties generateTemplatePropertiesEntity(TableDescription tableDescription) {
-        return generateTemplateProperties(entityTempName, entityPackage, tableDescription.getFileName(), generateContex(tableDescription.getMapContex()));
+        return generateTemplateProperties(entityTempName, getNamePackeMultiple(tableDescription, entityPackage), tableDescription.getFileName(), generateContex(tableDescription.getMapContex()));
     }
 
     @Override
     public TemplateProperties generateTemplatePropertiesEntityEmbededId(TableDescription tableDescription) {
         if (tableDescription.getMapContexEntityEmbededId() == null || tableDescription.getMapContexEntityEmbededId().size() == 0)
             return null;
-        return generateTemplateProperties(entityEmbededIdTempName, entityPackage, tableDescription.getFileNameEmbededId(), generateContex(tableDescription.getMapContexEntityEmbededId()));
+        return generateTemplateProperties(entityEmbededIdTempName, getNamePackeMultiple(tableDescription, entityPackage), tableDescription.getFileNameEmbededId(), generateContex(tableDescription.getMapContexEntityEmbededId()));
     }
 
     @Override
@@ -114,7 +114,7 @@ public class TemplatePreparationImpl implements TemplatePreparation {
         List listAttr = null;
         try {
             String entityName = className + "Entity";
-            listAttr = generateAttrDTOByEntity(pathJoinPackage(entityPackage, entityName), entityName, tableDescription);
+            listAttr = generateAttrDTOByEntity(pathJoinPackage(getNamePackeMultiple(tableDescription, entityPackage), entityName), entityName, tableDescription);
         } catch (IOException e) {
             log.error("generateAttrDTOByEntity");
 //            e.printStackTrace();
@@ -124,24 +124,24 @@ public class TemplatePreparationImpl implements TemplatePreparation {
         }
 
         List listImportParent = new ArrayList();
-        listImportParent.add(entityPackage + "." + className + "Entity");
+        listImportParent.add(getNamePackeMultiple(tableDescription, entityPackage) + "." + className + "Entity");
 
         Map mapRequest = new HashMap();
-        mapRequest.put("package", dtoRequestPackage);
+        mapRequest.put("package", dtoRequestPackage + "." + tableDescription.getClassName().toLowerCase());
         mapRequest.put("import_parent", listImportParent);
         mapRequest.put("class_name", className);
         mapRequest.put("data_list", listAttr);
 
         Map mapResponse = new HashMap();
-        mapResponse.put("package", dtoResponsePackage);
+        mapResponse.put("package", dtoResponsePackage + "." + tableDescription.getClassName().toLowerCase());
         mapResponse.put("import_parent", listImportParent);
         mapResponse.put("class_name", className);
         mapResponse.put("data_list", listAttr);
 
         String fileResponseGenerated = className + "Response";
         String fileRequestGenerated = className + "Request";
-        list.add(generateTemplateProperties(dtoRequestTempName, dtoRequestPackage, fileRequestGenerated, generateContex(mapRequest)));
-        list.add(generateTemplateProperties(dtoResponseTempName, dtoResponsePackage, fileResponseGenerated, generateContex(mapResponse)));
+        list.add(generateTemplateProperties(dtoRequestTempName, getNamePackeMultiple(tableDescription, dtoRequestPackage), fileRequestGenerated, generateContex(mapRequest)));
+        list.add(generateTemplateProperties(dtoResponseTempName, getNamePackeMultiple(tableDescription, dtoResponsePackage), fileResponseGenerated, generateContex(mapResponse)));
         return list;
     }
 
@@ -152,11 +152,11 @@ public class TemplatePreparationImpl implements TemplatePreparation {
         Map mapContex = new HashMap();
 
         List listImportParent = new ArrayList();
-        listImportParent.add(entityPackage + "." + nameClass + "Entity");
+        listImportParent.add(getNamePackeMultiple(tableDescription, entityPackage) + "." + nameClass + "Entity");
         if (pkIsOne(tableDescription)) {
             setStaticContexByColumnDesc(mapContex, tableDescription.getColumnDescriptions());
         } else {
-            listImportParent.add(entityPackage + "." + nameClass + "Id");
+            listImportParent.add(getNamePackeMultiple(tableDescription, entityPackage) + "." + nameClass + "Id");
             mapContex.put("type_pk", tableDescription.getClassName() + "Id");
         }
 
@@ -177,11 +177,11 @@ public class TemplatePreparationImpl implements TemplatePreparation {
 //        setStaticListImportService(listImportParent);
 //
         List listImportParent = new ArrayList();
-        listImportParent.add(entityPackage + "." + nameClass + "Entity");
-        if (!pkIsOne(tableDescription)) listImportParent.add(entityPackage + "." + nameClass + "Id");
+        listImportParent.add(getNamePackeMultiple(tableDescription, entityPackage) + "." + nameClass + "Entity");
+        if (!pkIsOne(tableDescription)) listImportParent.add(getNamePackeMultiple(tableDescription, entityPackage) + "." + nameClass + "Id");
+        listImportParent.add(getNamePackeMultiple(tableDescription, dtoRequestPackage) + "." + nameClass + "Request");
+        listImportParent.add(getNamePackeMultiple(tableDescription, dtoResponsePackage) + "." + nameClass + "Response");
         listImportParent.add(repositoryPackage + "." + nameClass + "Repository");
-        listImportParent.add(dtoRequestPackage + "." + nameClass + "Request");
-        listImportParent.add(dtoResponsePackage + "." + nameClass + "Response");
         setStaticListImportServiceImpl(listImportParent);
 
         Map mapContex = new HashMap();
@@ -220,7 +220,7 @@ public class TemplatePreparationImpl implements TemplatePreparation {
         String fileGenerated = nameClass + "Controller";
 
         List listImportParent = new ArrayList();
-        listImportParent.add(dtoRequestPackage + "." + nameClass + "Request");
+        listImportParent.add(getNamePackeMultiple(tableDescription, dtoRequestPackage) + "." + nameClass + "Request");
         listImportParent.add(servicePackage + "." + nameClass + "Service");
         setStaticListImportController(listImportParent);
 
@@ -396,7 +396,7 @@ public class TemplatePreparationImpl implements TemplatePreparation {
             String type = (String) map.get("type");
 
             if (nameEntityEmbededId.equalsIgnoreCase(type)) {
-                fileName = pathJoinPackage(entityPackage, nameEntityEmbededId);
+                fileName = pathJoinPackage(getNamePackeMultiple(tableDescription, entityPackage), nameEntityEmbededId);
                 javaFile = new File(fileName);
                 fieldNames = getFieldNamesFromFile(javaFile, nameEntityEmbededId);
                 for (Map map2 : fieldNames) {
@@ -673,5 +673,9 @@ public class TemplatePreparationImpl implements TemplatePreparation {
             }
         }
         return listParam;
+    }
+
+    public String getNamePackeMultiple(TableDescription tableDescription, String packageName){
+        return packageName + "." + tableDescription.getClassName().toLowerCase();
     }
 }

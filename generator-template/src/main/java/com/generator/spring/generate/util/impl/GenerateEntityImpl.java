@@ -155,8 +155,8 @@ public class GenerateEntityImpl implements GenerateEntity {
             String columnContex = setColumnContex(tableDescription, columnDescription, pkIsOne);
             if (columnContex != null) listColumnContex.add(columnContex);
         }
-        mapEntityContex.put("package", entityPackage);
-        mapEntityContex.put("import_parent", getListImportEntity(className));
+        mapEntityContex.put("package", getNamePackeMultiple(tableDescription, entityPackage));
+        mapEntityContex.put("import_parent", getListImportEntity(className, tableDescription));
         mapEntityContex.put("table_name", tableDescription.getTableName());
         mapEntityContex.put("data_list", listColumnContex);
         mapEntityContex.put("class_name", className);
@@ -171,8 +171,8 @@ public class GenerateEntityImpl implements GenerateEntity {
             setAttrEntityEmbeded(sb, map.getValue());
             if (sb != null && sb.toString() != null) listColumnContex.add(sb);
         }
-        mapEntityEmbededIdContex.put("package", entityPackage);
-        mapEntityEmbededIdContex.put("import_parent", getListImportEntity(className));
+        mapEntityEmbededIdContex.put("package", getNamePackeMultiple(tableDescription, entityPackage));
+        mapEntityEmbededIdContex.put("import_parent", getListImportEntity(className, tableDescription));
         mapEntityEmbededIdContex.put("table_name", tableDescription.getTableName());
         mapEntityEmbededIdContex.put("data_list", listColumnContex);
         mapEntityEmbededIdContex.put("class_name", className);
@@ -324,9 +324,13 @@ public class GenerateEntityImpl implements GenerateEntity {
         return resource.getFile();
     }
 
-    public List getListImportEntity(String nameClass) {
+    public List getListImportEntity(String nameClass, TableDescription tableDescription) {
         List listImportParent = new ArrayList();
-        listImportParent.add(dtoRequestPackage + "." + nameClass + "Request");
+        listImportParent.add(dtoRequestPackage + "." + tableDescription.getClassName().toLowerCase() + "." + nameClass + "Request");
         return listImportParent;
+    }
+
+    public String getNamePackeMultiple(TableDescription tableDescription, String packageName){
+        return packageName + "." + tableDescription.getClassName().toLowerCase();
     }
 }

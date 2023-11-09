@@ -96,6 +96,15 @@ public class GenerateTemplateImpl implements GenerateTemplate {
 //                throw new RuntimeException("Folder Not Found");
             }
 
+            int lastIndex = templateProperties.getFilePath().lastIndexOf("/");
+            String folderClassPath = templateProperties.getFilePath().substring(0, lastIndex + 1);
+            File folderClass = new File(folderClassPath);
+
+            if(folderClass != null && !folderClass.exists()){
+                folderClass.mkdir();
+                log.trace("FOLDER CLASS CREATE {}", folderClass.getAbsoluteFile());
+            }
+
 //            if (templateProperties.isCreateDrop()) {
 //                fileClass.delete();
 //            }
