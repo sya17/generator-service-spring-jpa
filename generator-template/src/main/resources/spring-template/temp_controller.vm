@@ -23,8 +23,10 @@ import java.util.List;
 @RequestMapping("${path_api}")
 @Tag(name = "${class_name}", description = "REST API for ${class_name}")
 public class ${class_name}Controller {
+    #set($lowercaseFirstChar = $class_name.substring(0, 1).toLowerCase())
+    #set($className = $lowercaseFirstChar + $class_name.substring(1))
 
-    private final ${class_name}Service service;
+    private final ${class_name}Service ${className}service;
 
     @GetMapping
     @ApiResponses(value = {
@@ -53,7 +55,7 @@ public class ${class_name}Controller {
             @Parameter(description = "page size")
             @RequestParam(name = "size", defaultValue = "20") @PositiveOrZero Integer size
     ) {
-        var result = this.service.getAll(filters, page, size);
+        var result = this.${className}service.getAll(filters, page, size);
         return new ResponseEntity<BaseResponse>(result, HttpStatus.OK);
     }
 
@@ -81,7 +83,7 @@ public class ${class_name}Controller {
             $param
         #end
         ) {
-        var result = this.service.getById(#foreach ($param in $list_param_value) $param #end);
+        var result = this.${className}service.getById(#foreach ($param in $list_param_value) $param #end);
         return new ResponseEntity<BaseResponse>(result, HttpStatus.OK);
     }
 
@@ -105,7 +107,7 @@ public class ${class_name}Controller {
                             schema = @Schema(implementation = BaseResponse.class))})
     })
     public ResponseEntity<BaseResponse> save(@RequestBody @Valid ${class_name}Request request) {
-        var result = this.service.save(request);
+        var result = this.${className}service.save(request);
         return new ResponseEntity<BaseResponse>(result, HttpStatus.CREATED);
     }
 
@@ -134,7 +136,7 @@ public class ${class_name}Controller {
                 $param
             #end
             ) {
-        var result = this.service.update(request, #foreach ($param in $list_param_value) $param #end);
+        var result = this.${className}service.update(request, #foreach ($param in $list_param_value) $param #end);
         return new ResponseEntity<BaseResponse>(result, HttpStatus.OK);
     }
 

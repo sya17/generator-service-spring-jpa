@@ -21,8 +21,10 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ${class_name}Service {
+    #set($lowercaseFirstChar = $class_name.substring(0, 1).toLowerCase())
+    #set($className = $lowercaseFirstChar + $class_name.substring(1))
 
-    private final ${class_name}Repository repository;
+    private final ${class_name}Repository ${className}repository;
     private final SpecificationUtil specificationUtil;
 
     public BaseResponse<List<${class_name}Response>> getAll(
@@ -34,9 +36,9 @@ public class ${class_name}Service {
     Pageable pageable = PageRequest.of(pageIndex - 1, pageSize);
     if (filters != null && !filters.isEmpty()) {
         Specification<${class_name}Entity> spec = specificationUtil.buildSpecification(filters);
-        pageResult = repository.findAll(spec, pageable);
+        pageResult = ${className}repository.findAll(spec, pageable);
     } else {
-        pageResult = repository.findAll(pageable);
+        pageResult = ${className}repository.findAll(pageable);
     }
     List<${class_name}Response> dataList = new ArrayList<>();
     if (pageResult.getContent().isEmpty()) {
@@ -66,9 +68,9 @@ public class ${class_name}Service {
     ) {
         #if($list_param_value.size() > 1)
         ${class_name}Id entityId = new ${class_name}Id(#foreach ($param in $list_param_value) $param #end);
-        ${class_name}Entity entity = this.repository.findById(entityId).orElse(null);
+        ${class_name}Entity entity = this.${className}repository.findById(entityId).orElse(null);
         #else
-        ${class_name}Entity entity = this.repository.findById(#foreach ($param in $list_param_value) $param #end).orElse(null);
+        ${class_name}Entity entity = this.${className}repository.findById(#foreach ($param in $list_param_value) $param #end).orElse(null);
         #end
         if (entity == null) {
             throw new CommonApiException("Id Not Found", HttpStatus.BAD_REQUEST);
@@ -85,7 +87,7 @@ public class ${class_name}Service {
     public BaseResponse<${class_name}Response> save(${class_name}Request request) {
         ${class_name}Entity entity = new ${class_name}Entity(request);
         try {
-            this.repository.saveAndFlush(entity);
+            this.${className}repository.saveAndFlush(entity);
             var data = BaseResponse.<${class_name}Response>builder()
                     .timestamp(new Date())
                     .data(new ${class_name}Response(entity))
@@ -106,9 +108,9 @@ public class ${class_name}Service {
         ) {
         #if($list_param_value.size() > 1)
         ${class_name}Id entityId = new ${class_name}Id(#foreach ($param in $list_param_value) $param #end);
-        ${class_name}Entity entity = this.repository.findById(entityId).orElse(null);
+        ${class_name}Entity entity = this.${className}repository.findById(entityId).orElse(null);
         #else
-        ${class_name}Entity entity = this.repository.findById(#foreach ($param in $list_param_value) $param #end).orElse(null);
+        ${class_name}Entity entity = this.${className}repository.findById(#foreach ($param in $list_param_value) $param #end).orElse(null);
         #end
         if (entity == null) {
             throw new CommonApiException("Id Not Found", HttpStatus.BAD_REQUEST);
@@ -117,7 +119,7 @@ public class ${class_name}Service {
         BeanUtils.copyProperties(request, entity);
         // save ke database
         try {
-            this.repository.saveAndFlush(entity);
+            this.${className}repository.saveAndFlush(entity);
             var data = BaseResponse.<${class_name}Response>builder()
                     .timestamp(new Date())
                     .data(new ${class_name}Response(entity))
