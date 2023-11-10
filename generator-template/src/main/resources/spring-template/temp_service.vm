@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,7 +28,7 @@ public class ${class_name}Service {
     private final ${class_name}Repository ${className}repository;
     private final SpecificationUtil specificationUtil;
 
-    public BaseResponse<List<${class_name}Response>> getAll(
+    public ResponseEntity<BaseResponse<List<${class_name}Response>>> getAll(
             List<String> filters,
             Integer pageIndex,
             Integer pageSize
@@ -48,7 +49,7 @@ public class ${class_name}Service {
             .map(${class_name}Response::new)
             .collect(Collectors.toList());
     }
-    var data = BaseResponse.<List<${class_name}Response>>builder()
+    var response = BaseResponse.<List<${class_name}Response>>builder()
                         .timestamp(new Date())
                         .data(dataList)
                         .statusCode(HttpStatus.OK.value())
@@ -58,10 +59,10 @@ public class ${class_name}Service {
                         .ttlPages(pageResult.getTotalPages())
                         .ttlRecords((int) pageResult.getTotalElements())
                         .build();
-        return data;
+        return ResponseEntity.ok(response);
     }
 
-    public BaseResponse<${class_name}Response> getById(
+    public ResponseEntity<BaseResponse<${class_name}Response>> getById(
     #foreach ($param in $list_param)
         $param
     #end
@@ -75,32 +76,32 @@ public class ${class_name}Service {
         if (entity == null) {
             throw new CommonApiException("Id Not Found", HttpStatus.BAD_REQUEST);
         }
-        var data = BaseResponse.<${class_name}Response>builder()
+        var response = BaseResponse.<${class_name}Response>builder()
                 .timestamp(new Date())
                 .data(new ${class_name}Response(entity))
                 .statusCode(HttpStatus.OK.value())
                 .message("Get Successs")
                 .build();
-        return data;
+        return ResponseEntity.ok(response);
     }
 
-    public BaseResponse<${class_name}Response> save(${class_name}Request request) {
+    public ResponseEntity<BaseResponse<${class_name}Response>> save(${class_name}Request request) {
         ${class_name}Entity entity = new ${class_name}Entity(request);
         try {
             this.${className}repository.saveAndFlush(entity);
-            var data = BaseResponse.<${class_name}Response>builder()
+            var response = BaseResponse.<${class_name}Response>builder()
                     .timestamp(new Date())
                     .data(new ${class_name}Response(entity))
                     .statusCode(HttpStatus.OK.value())
                     .message("Save Successs")
                     .build();
-            return data;
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             throw new CommonApiException("Failed save to database", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    public BaseResponse<${class_name}Response> update(
+    public ResponseEntity<BaseResponse<${class_name}Response>> update(
         ${class_name}Request request,
         #foreach ($param in $list_param)
             $param
@@ -120,13 +121,13 @@ public class ${class_name}Service {
         // save ke database
         try {
             this.${className}repository.saveAndFlush(entity);
-            var data = BaseResponse.<${class_name}Response>builder()
+            var response = BaseResponse.<${class_name}Response>builder()
                     .timestamp(new Date())
                     .data(new ${class_name}Response(entity))
                     .statusCode(HttpStatus.OK.value())
                     .message("Updated Success")
                     .build();
-            return data;
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             throw new CommonApiException("Failed update to database", HttpStatus.INTERNAL_SERVER_ERROR);
         }

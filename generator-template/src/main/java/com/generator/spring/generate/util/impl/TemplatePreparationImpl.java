@@ -222,6 +222,7 @@ public class TemplatePreparationImpl implements TemplatePreparation {
         List listImportParent = new ArrayList();
         listImportParent.add(getNamePackeMultiple(tableDescription, dtoRequestPackage) + "." + nameClass + "Request");
         listImportParent.add(servicePackage + "." + nameClass + "Service");
+        listImportParent.add(getNamePackeMultiple(tableDescription, dtoResponsePackage) + "." + nameClass + "Response");
         setStaticListImportController(listImportParent);
 
         Map mapContex = new HashMap();

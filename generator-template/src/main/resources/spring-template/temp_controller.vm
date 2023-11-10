@@ -49,7 +49,7 @@ public class ${class_name}Controller {
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = BaseResponse.class))})
     })
-    public ResponseEntity<BaseResponse> getAll(
+    public ResponseEntity<BaseResponse<List<${class_name}Response>>> getAll(
             @Parameter(description = "Filter example column_name OPERATOR value")
             @RequestParam(value = "filter", required = false) List<String> filters,
             @Parameter(description = "1-based page index (1..N)")
@@ -57,8 +57,7 @@ public class ${class_name}Controller {
             @Parameter(description = "page size")
             @RequestParam(name = "size", defaultValue = "20") @PositiveOrZero Integer size
     ) {
-        var result = this.${className}service.getAll(filters, page, size);
-        return new ResponseEntity<BaseResponse>(result, HttpStatus.OK);
+        return this.${className}service.getAll(filters, page, size);
     }
 
     @Operation(summary = "Get By Id ${class_name}")
@@ -81,13 +80,12 @@ public class ${class_name}Controller {
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = BaseResponse.class))})
     })
-    public ResponseEntity<BaseResponse> getById(
+    public ResponseEntity<BaseResponse<${class_name}Response>> getById(
         #foreach ($param in $list_param)
             $param
         #end
         ) {
-        var result = this.${className}service.getById(#foreach ($param in $list_param_value) $param #end);
-        return new ResponseEntity<BaseResponse>(result, HttpStatus.OK);
+        return this.${className}service.getById(#foreach ($param in $list_param_value) $param #end);
     }
 
     @Operation(summary = "Save ${class_name}")
@@ -110,9 +108,8 @@ public class ${class_name}Controller {
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = BaseResponse.class))})
     })
-    public ResponseEntity<BaseResponse> save(@RequestBody @Valid ${class_name}Request request) {
-        var result = this.${className}service.save(request);
-        return new ResponseEntity<BaseResponse>(result, HttpStatus.CREATED);
+    public ResponseEntity<BaseResponse<${class_name}Response>> save(@RequestBody @Valid ${class_name}Request request) {
+        return this.${className}service.save(request);
     }
 
     @Operation(summary = "Update ${class_name}")
@@ -135,14 +132,13 @@ public class ${class_name}Controller {
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = BaseResponse.class))})
     })
-    public ResponseEntity<BaseResponse> update(
+    public ResponseEntity<BaseResponse<${class_name}Response>> update(
                 @RequestBody @Valid ${class_name}Request request,
             #foreach ($param in $list_param)
                 $param
             #end
             ) {
-        var result = this.${className}service.update(request, #foreach ($param in $list_param_value) $param #end);
-        return new ResponseEntity<BaseResponse>(result, HttpStatus.OK);
+        return this.${className}service.update(request, #foreach ($param in $list_param_value) $param #end);
     }
 
 }
