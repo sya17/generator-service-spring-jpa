@@ -26,7 +26,7 @@ public class ${class_name}Service {
     #set($className = $lowercaseFirstChar + $class_name.substring(1))
 
     private final ${class_name}Repository ${className}repository;
-    private final SpecificationUtil specificationUtil;
+    private final SpecificationUtil<${class_name}Entity> specificationUtil;
 
     public ResponseEntity<BaseResponse<List<${class_name}Response>>> getAll(
             List<String> filters,
