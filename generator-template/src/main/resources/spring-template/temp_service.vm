@@ -41,7 +41,7 @@ public class ${class_name}Service {
     } else {
         pageResult = ${className}repository.findAll(pageable);
     }
-    List<${class_name}Response> dataList = new ArrayList<>();
+    List<${class_name}Response> dataList;
     if (pageResult.getContent().isEmpty()) {
         dataList = null;
     } else {
