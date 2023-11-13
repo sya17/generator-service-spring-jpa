@@ -46,8 +46,7 @@ public class ${class_name}Service {
         dataList = null;
     } else {
         dataList = pageResult.getContent().stream()
-            .map(${class_name}Response::new)
-            .collect(Collectors.toList());
+            .map(${class_name}Response::new).toList();
     }
     var response = BaseResponse.<List<${class_name}Response>>builder()
                         .timestamp(new Date())
