@@ -34,7 +34,7 @@ public class ${class_name}Service {
             Integer pageSize
     ) {
     Page<${class_name}Entity> pageResult = null;
-    Pageable pageable = PageRequest.of(pageIndex - 1, pageSize);
+    Pageable pageable = PageRequest.of(pageIndex, pageSize);
     if (filters != null && !filters.isEmpty()) {
         Specification<${class_name}Entity> spec = specificationUtil.buildSpecification(filters);
         pageResult = ${className}repository.findAll(spec, pageable);

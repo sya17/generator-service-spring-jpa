@@ -52,8 +52,8 @@ public class ${class_name}Controller {
     public ResponseEntity<BaseResponse<List<${class_name}Response>>> getAll(
             @Parameter(description = "Filter example column_name OPERATOR value")
             @RequestParam(value = "filter", required = false) List<String> filters,
-            @Parameter(description = "1-based page index (1..N)")
-            @RequestParam(name = "page", defaultValue = "1") @PositiveOrZero Integer page,
+            @Parameter(description = "1-based page index (0..N)")
+            @RequestParam(name = "page", defaultValue = "0") @PositiveOrZero Integer page,
             @Parameter(description = "page size")
             @RequestParam(name = "size", defaultValue = "20") @PositiveOrZero Integer size
     ) {
