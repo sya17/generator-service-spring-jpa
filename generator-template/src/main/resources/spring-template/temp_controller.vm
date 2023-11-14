@@ -50,7 +50,17 @@ public class ${class_name}Controller {
                             schema = @Schema(implementation = BaseResponse.class))})
     })
     public ResponseEntity<BaseResponse<List<${class_name}Response>>> getAll(
-            @Parameter(description = "Filter example column_name OPERATOR value")
+            @Parameter(
+                                description = "" +
+                                        "Filter Criteria" +
+                                        "<br/>" +
+                                        "EQUALS                     filter=column=value <br/>" +
+                                        "NOT EQUALS                 filter=column!=value <br/>" +
+                                        "GREATER THAN               filter=column>value <br/>" +
+                                        "LESS THAN                  filter=column<value <br/>" +
+                                        "GREATER THAN OR EQUALS     filter=column>=value <br/>" +
+                                        "LESS THAN OR EQUALS        filter=column<=value <br/>"
+            )
             @RequestParam(value = "filter", required = false) List<String> filters,
             @Parameter(description = "1-based page index (0..N)")
             @RequestParam(name = "page", defaultValue = "0") @PositiveOrZero Integer page,
