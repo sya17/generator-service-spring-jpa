@@ -51,15 +51,15 @@ public class ${class_name}Controller {
     })
     public ResponseEntity<BaseResponse<List<${class_name}Response>>> getAll(
             @Parameter(
-                                description = "" +
-                                        "Filter Criteria" +
-                                        "<br/>" +
-                                        "EQUALS                     filter=column=value <br/>" +
-                                        "NOT EQUALS                 filter=column!=value <br/>" +
-                                        "GREATER THAN               filter=column>value <br/>" +
-                                        "LESS THAN                  filter=column<value <br/>" +
-                                        "GREATER THAN OR EQUALS     filter=column>=value <br/>" +
-                                        "LESS THAN OR EQUALS        filter=column<=value <br/>"
+                       description = "" +
+                            "Filter Criteria" +
+                            "<br/>" +
+                            "EQUALS                     filter=column=value <br/>" +
+                            "NOT EQUALS                 filter=column!=value <br/>" +
+                            "GREATER THAN               filter=column>value <br/>" +
+                            "LESS THAN                  filter=column<value <br/>" +
+                            "GREATER THAN OR EQUALS     filter=column>=value <br/>" +
+                            "LESS THAN OR EQUALS        filter=column<=value <br/>"
             )
             @RequestParam(value = "filter", required = false) List<String> filters,
             @Parameter(description = "1-based page index (0..N)")
