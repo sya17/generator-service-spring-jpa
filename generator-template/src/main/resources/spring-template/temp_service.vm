@@ -28,6 +28,7 @@ public class ${class_name}Service {
     private final ${class_name}Repository ${className}repository;
     private final SpecificationUtil<${class_name}Entity> specificationUtil;
 
+    @Transactional(readOnly = true)
     public ResponseEntity<BaseResponse<List<${class_name}Response>>> getAll(
             List<String> filters,
             Integer pageIndex,
@@ -61,6 +62,7 @@ public class ${class_name}Service {
         return ResponseEntity.ok(response);
     }
 
+    @Transactional(readOnly = true)
     public ResponseEntity<BaseResponse<${class_name}Response>> getById(
     #foreach ($param in $list_param)
         $param
@@ -84,6 +86,7 @@ public class ${class_name}Service {
         return ResponseEntity.ok(response);
     }
 
+    @Transactional
     public ResponseEntity<BaseResponse<${class_name}Response>> save(${class_name}Request request) {
         ${class_name}Entity entity = new ${class_name}Entity(request);
         try {
@@ -100,6 +103,7 @@ public class ${class_name}Service {
         }
     }
 
+    @Transactional
     public ResponseEntity<BaseResponse<${class_name}Response>> update(
         ${class_name}Request request,
         #foreach ($param in $list_param)
