@@ -12,10 +12,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -105,12 +102,12 @@ public class GenerateEntityImpl implements GenerateEntity {
                         ColumnDescription columnDescription = new ColumnDescription(
                                 parts[0].trim(),
                                 parts[1].trim(),
-                                parts[2].trim().equals("Y"),
-                                parts[3].trim().equals("Y"),
-                                parts[4].trim().equals("Y"),
-                                parts[5].trim().equals("Y"),
+                                parts[2].trim().toUpperCase().equals("Y"),
+                                parts[3].trim().toUpperCase().equals("Y"),
+                                parts[4].trim().toUpperCase().equals("Y"),
+                                parts[5].trim().toUpperCase().equals("Y"),
                                 parts[6].trim(),
-                                parts[7].trim().equals("Y")
+                                parts[7].trim().toUpperCase().equals("Y")
                         );
                         if (currentTableDescription.getMapPK().containsKey(parts[0].trim())) {
                             Map<String, ColumnDescription> mapPk = currentTableDescription.getMapPK();
