@@ -178,7 +178,8 @@ public class TemplatePreparationImpl implements TemplatePreparation {
 //
         List listImportParent = new ArrayList();
         listImportParent.add(getNamePackeMultiple(tableDescription, entityPackage) + "." + nameClass + "Entity");
-        if (!pkIsOne(tableDescription)) listImportParent.add(getNamePackeMultiple(tableDescription, entityPackage) + "." + nameClass + "Id");
+        if (!pkIsOne(tableDescription))
+            listImportParent.add(getNamePackeMultiple(tableDescription, entityPackage) + "." + nameClass + "Id");
         listImportParent.add(getNamePackeMultiple(tableDescription, dtoRequestPackage) + "." + nameClass + "Request");
         listImportParent.add(getNamePackeMultiple(tableDescription, dtoResponsePackage) + "." + nameClass + "Response");
         listImportParent.add(repositoryPackage + "." + nameClass + "Repository");
@@ -494,7 +495,7 @@ public class TemplatePreparationImpl implements TemplatePreparation {
 //        list.add(dtoRequestPackage + ".PageFilterRequest");
         list.add(dtoResponsePackage + ".BaseResponse");
         list.add(basePackage + ".util.SpecificationUtil");
-        list.add("com.fincoreplus.baseservice.exception.CommonApiException");
+        list.add(basePackage + ".exception.CommonApiException");
     }
 
     public void setStaticListImportService(List list) {
@@ -676,7 +677,7 @@ public class TemplatePreparationImpl implements TemplatePreparation {
         return listParam;
     }
 
-    public String getNamePackeMultiple(TableDescription tableDescription, String packageName){
+    public String getNamePackeMultiple(TableDescription tableDescription, String packageName) {
         return packageName + "." + tableDescription.getClassName().toLowerCase();
     }
 }

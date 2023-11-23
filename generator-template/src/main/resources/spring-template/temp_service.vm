@@ -32,11 +32,13 @@ public class ${class_name}Service {
     @Transactional(readOnly = true)
     public ResponseEntity<BaseResponse<List<${class_name}Response>>> getAll(
             List<String> filters,
+            String orderAsc,
+            String orderDesc,
             Integer pageIndex,
             Integer pageSize
     ) {
     Page<${class_name}Entity> pageResult = null;
-    Pageable pageable = PageRequest.of(pageIndex, pageSize);
+    Pageable pageable = specificationUtil.setPagiableWithSort(orderAsc, orderDesc, pageIndex, pageSize);
     if (filters != null && !filters.isEmpty()) {
         Specification<${class_name}Entity> spec = specificationUtil.buildSpecification(filters);
         pageResult = ${className}repository.findAll(spec, pageable);

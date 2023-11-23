@@ -62,12 +62,16 @@ public class ${class_name}Controller {
                             "LESS THAN OR EQUALS        filter=column<=value <br/>"
             )
             @RequestParam(value = "filter", required = false) List<String> filters,
+            @Parameter(description = "Determines the data order ascending (example: column1,column2)")
+            @RequestParam(value = "asc", required = false) String orderAsc,
+            @Parameter(description = "Determines the data order descending (example: column1,column2)")
+            @RequestParam(value = "desc", required = false) String orderDesc,
             @Parameter(description = "1-based page index (0..N)")
             @RequestParam(name = "page", defaultValue = "0") @PositiveOrZero Integer page,
             @Parameter(description = "page size")
             @RequestParam(name = "size", defaultValue = "20") @PositiveOrZero Integer size
     ) {
-        return this.${className}service.getAll(filters, page, size);
+        return this.${className}service.getAll(filters, orderAsc, orderDesc, page, size);
     }
 
     @Operation(summary = "Get By Id ${class_name}")
