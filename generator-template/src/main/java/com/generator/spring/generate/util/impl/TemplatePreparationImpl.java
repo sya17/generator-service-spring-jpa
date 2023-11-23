@@ -98,7 +98,7 @@ public class TemplatePreparationImpl implements TemplatePreparation {
 
     @Override
     public TemplateProperties generateTemplatePropertiesEntity(TableDescription tableDescription) {
-        return generateTemplateProperties(entityTempName, getNamePackeMultiple(tableDescription, entityPackage), tableDescription.getFileName(), generateContex(tableDescription.getMapContex()));
+        return generateTemplateProperties(entityTempName, getNamePackeMultiple(tableDescription, entityPackage), tableDescription.getClassName(), generateContex(tableDescription.getMapContex()));
     }
 
     @Override
@@ -113,7 +113,7 @@ public class TemplatePreparationImpl implements TemplatePreparation {
         List<TemplateProperties> list = new ArrayList<>();
         List listAttr = null;
         try {
-            String entityName = className + "Entity";
+            String entityName = className ;
             listAttr = generateAttrDTOByEntity(pathJoinPackage(getNamePackeMultiple(tableDescription, entityPackage), entityName), entityName, tableDescription);
         } catch (IOException e) {
             log.error("generateAttrDTOByEntity");
@@ -124,7 +124,7 @@ public class TemplatePreparationImpl implements TemplatePreparation {
         }
 
         List listImportParent = new ArrayList();
-        listImportParent.add(getNamePackeMultiple(tableDescription, entityPackage) + "." + className + "Entity");
+        listImportParent.add(getNamePackeMultiple(tableDescription, entityPackage) + "." + className );
 
         Map mapRequest = new HashMap();
         mapRequest.put("package", dtoRequestPackage + "." + tableDescription.getClassName().toLowerCase());
@@ -152,7 +152,7 @@ public class TemplatePreparationImpl implements TemplatePreparation {
         Map mapContex = new HashMap();
 
         List listImportParent = new ArrayList();
-        listImportParent.add(getNamePackeMultiple(tableDescription, entityPackage) + "." + nameClass + "Entity");
+        listImportParent.add(getNamePackeMultiple(tableDescription, entityPackage) + "." + nameClass );
         if (pkIsOne(tableDescription)) {
             setStaticContexByColumnDesc(mapContex, tableDescription.getColumnDescriptions());
         } else {
@@ -177,7 +177,7 @@ public class TemplatePreparationImpl implements TemplatePreparation {
 //        setStaticListImportService(listImportParent);
 //
         List listImportParent = new ArrayList();
-        listImportParent.add(getNamePackeMultiple(tableDescription, entityPackage) + "." + nameClass + "Entity");
+        listImportParent.add(getNamePackeMultiple(tableDescription, entityPackage) + "." + nameClass );
         if (!pkIsOne(tableDescription))
             listImportParent.add(getNamePackeMultiple(tableDescription, entityPackage) + "." + nameClass + "Id");
         listImportParent.add(getNamePackeMultiple(tableDescription, dtoRequestPackage) + "." + nameClass + "Request");
@@ -201,7 +201,7 @@ public class TemplatePreparationImpl implements TemplatePreparation {
         String fileGenerated = nameClass + "ServiceImpl";
 
         List listImportParent = new ArrayList();
-        listImportParent.add(entityPackage + "." + nameClass + "Entity");
+        listImportParent.add(entityPackage + "." + nameClass );
         listImportParent.add(repositoryPackage + "." + nameClass + "Repository");
         listImportParent.add(dtoRequestPackage + "." + nameClass + "Request");
         listImportParent.add(dtoResponsePackage + "." + nameClass + "Response");
@@ -483,16 +483,11 @@ public class TemplatePreparationImpl implements TemplatePreparation {
     }
 
     public void setStaticListImportController(List list) {
-//        list.add(dtoRequestPackage + ".PageFilterRequest");
-//        list.add(dtoResponsePackage + ".Response");
         list.add(dtoResponsePackage + ".BaseResponse");
-        list.add("io.swagger.v3.oas.annotations.Parameter");
         list.add("jakarta.validation.constraints.PositiveOrZero");
     }
 
     public void setStaticListImportServiceImpl(List list) {
-//        list.add("com.test.generate.exception.CommonApiException");
-//        list.add(dtoRequestPackage + ".PageFilterRequest");
         list.add(dtoResponsePackage + ".BaseResponse");
         list.add(basePackage + ".util.SpecificationUtil");
         list.add(basePackage + ".exception.CommonApiException");

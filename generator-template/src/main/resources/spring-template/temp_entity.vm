@@ -24,13 +24,13 @@ import java.util.Date;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "${table_name}")
-public class ${class_name}Entity {
+public class ${class_name} {
 #foreach ($item in $data_list)
 
     $item
 #end
 
-    public ${class_name}Entity(${class_name}Request model) {
+    public ${class_name}(${class_name}Request model) {
         BeanUtils.copyProperties(model, this);
     }
 }

@@ -16,7 +16,7 @@ import java.util.Map;
 @Builder
 public class TableDescription {
     private String tableName;
-    private String fileName;
+//    private String fileName;
     private String fileNameEmbededId;
     private String className;
     private Map mapContex;

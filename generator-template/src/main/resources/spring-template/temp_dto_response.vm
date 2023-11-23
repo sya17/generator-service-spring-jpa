@@ -20,7 +20,7 @@ public class ${class_name}Response {
     $item
 #end
 
-    public ${class_name}Response(${class_name}Entity entity) {
+    public ${class_name}Response(${class_name} entity) {
         BeanUtils.copyProperties(entity, this);
     }
 }

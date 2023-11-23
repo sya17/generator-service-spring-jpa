@@ -78,7 +78,11 @@ public class GenerateEntityImpl implements GenerateEntity {
             while ((line = br.readLine()) != null) {
                 if (line.startsWith("#TABLE")) {
                     currentTableDescription = new TableDescription();
-                    currentTableDescription.setTableName(line.trim().replace("#TABLE", "").trim());
+                    String[] tableSplit = line.trim().replace("#TABLE", "").split("=");
+                    if (tableSplit.length > 0) {
+                        currentTableDescription.setTableName(tableSplit[0]);
+                        currentTableDescription.setClassName(tableSplit[1]);
+                    }
                     tableDescriptions.add(currentTableDescription);
                     continue;
                 }
@@ -133,12 +137,13 @@ public class GenerateEntityImpl implements GenerateEntity {
         }
         for (TableDescription tableDescription : listTD) {
             boolean pkIsOne = tableDescription.getMapPK() == null || tableDescription.getMapPK().size() == 0;
-            String className = setNameClass(tableDescription.getTableName());
+//            String className = setNameClass(tableDescription.getTableName());
+            String className = tableDescription.getClassName();
             StringBuffer pkMultiple = new StringBuffer();
 
-            tableDescription.setFileName(className + "Entity");
+//            tableDescription.setFileName(className + "Entity");
             tableDescription.setFileNameEmbededId(className + "Id");
-            tableDescription.setClassName(className);
+//            tableDescription.setClassName(className);
             tableDescription.setMapContexEntityEmbededId(!pkIsOne ? getMapContexEntityEmbededId(tableDescription, className, pkMultiple) : null);
             tableDescription.setMapContex(getMapContexEntity(tableDescription, className, pkIsOne, pkMultiple));
         }
@@ -329,7 +334,7 @@ public class GenerateEntityImpl implements GenerateEntity {
         return listImportParent;
     }
 
-    public String getNamePackeMultiple(TableDescription tableDescription, String packageName){
+    public String getNamePackeMultiple(TableDescription tableDescription, String packageName) {
         return packageName + "." + tableDescription.getClassName().toLowerCase();
     }
 }
