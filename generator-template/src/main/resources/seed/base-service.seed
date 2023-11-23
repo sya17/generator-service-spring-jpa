@@ -1,33 +1,22 @@
 **** desc {nama_kolom, tipe_data, unique, nullable, insertable, updatable, length, pk}
 
-#TABLE mst_users
-user_id, varchar, N, N, Y, Y, 30, Y
-user_org_id, int4, Y, Y, Y, Y, -, -
-user_company_id, int4, Y, Y, Y, Y, -, -
-user_name, varchar, N, N, Y, Y, 100, -
-user_password, varchar, N, Y, Y, Y, 60, -
-user_created_date, timestamptz,  N, N, Y, Y, -, -
-user_created_by, varchar, N, N, Y, Y, 30, -
-user_updated_date, timestamptz,  N, Y, Y, Y, -, -
-user_updated_by, varchar, N, Y, Y, Y, 30, -
-user_person_id, int4, Y, Y, Y, Y, -, -
-user_start_date, date,  N, N, Y, Y, -, -
-user_end_date, date,  N, Y, Y, Y, -, -
-user_description, varchar, N, Y, Y, Y, 240, -
-user_last_logon, timestamptz,  N, Y, Y, Y, -, -
-user_last_password, date,  N, Y, Y, Y, -, -
-user_pass_lifespan, int2, N, Y, Y, Y, -, -
-user_pass_need_chg, varchar, N, N, Y, Y, 1, -
-user_enable_sts, varchar, N, N, Y, Y, 1, -
 
-Table mst_roles
-  role_id, serial4, N, N, Y, Y, -, Y
-  role_org_id, int4, N, N, Y, Y, -, -
-  role_company_id, int4, N, N, Y, Y, -, -
-  role_name, varchar, N, N, Y, Y, 100, -
-  role_description, N, N, Y, Y, 300, -
-  role_created_by, N, N, Y, Y, 30, -
-  role_created_date, timestamptz,  N, N, Y, Y, -, -
-  role_updated_by, N, Y, Y, Y, 30, -
-  role_updated_date, timestamptz,  N, Y, Y, Y, -, -
-  role_seqn, int2, N, Y, Y, Y, -, -
+
+#TABLE mst_area_kerja=AreaKerja
+	area_kerja_id, serial4, y, n, y, y, -, y
+	company_id, int4, n, n, y, y, -, -
+	branch_id, int4, n, y, y, y, -, -
+	description, text, n, y, y, y, -, -
+	latlang_array, text, n, y, y, y, -, -
+	eff_from_date, date, n, n, y, y, -, -
+	eff_to_date, date, n, y, y, y, -, -
+	updated_date, date, n, y, y, y, -, -
+	created_date, date, n, y, y, y, -, -
+	created_by, varchar, n, n, y, y, 30, -
+	updated_by, varchar, n, y, y, y, 30, -
+	province_id, int4, n, y, y, y, -, -
+	city_id, int4, n, y, y, y, -, -
+	kel_id, int4, n, y, y, y, -, -
+	kec_id, int4, n, y, y, y, -, -
+	zip_code, varchar, n, y, y, y, ,30, -
+	sub_zip_code, varchar, n, y, y, y, ,30, -
