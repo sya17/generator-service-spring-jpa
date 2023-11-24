@@ -76,7 +76,7 @@ public class GenerateEntityImpl implements GenerateEntity {
             TableDescription currentTableDescription = null;
 
             while ((line = br.readLine()) != null) {
-                if (line.startsWith("#TABLE")) {
+                if (line.toUpperCase().startsWith("#TABLE")) {
                     currentTableDescription = new TableDescription();
                     String[] tableSplit = line.trim().replace("#TABLE", "").split("=");
                     if (tableSplit.length > 0) {
@@ -142,7 +142,7 @@ public class GenerateEntityImpl implements GenerateEntity {
             StringBuffer pkMultiple = new StringBuffer();
 
 //            tableDescription.setFileName(className + "Entity");
-            tableDescription.setFileNameEmbededId(className + "Id");
+            tableDescription.setFileNameEmbededId(className + "Key");
 //            tableDescription.setClassName(className);
             tableDescription.setMapContexEntityEmbededId(!pkIsOne ? getMapContexEntityEmbededId(tableDescription, className, pkMultiple) : null);
             tableDescription.setMapContex(getMapContexEntity(tableDescription, className, pkIsOne, pkMultiple));

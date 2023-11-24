@@ -13,7 +13,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Embeddable
 @Builder
-public class ${class_name}Id implements Serializable {
+public class ${class_name}Key implements Serializable {
 #foreach ($item in $data_list)
 
     $item
