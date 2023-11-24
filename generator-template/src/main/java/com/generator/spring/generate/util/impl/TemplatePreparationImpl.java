@@ -157,7 +157,7 @@ public class TemplatePreparationImpl implements TemplatePreparation {
             setStaticContexByColumnDesc(mapContex, tableDescription.getColumnDescriptions());
         } else {
             listImportParent.add(getNamePackeMultiple(tableDescription, entityPackage) + "." + nameClass + "Id");
-            mapContex.put("type_pk", tableDescription.getClassName() + "Id");
+            mapContex.put("type_pk", tableDescription.getClassName() + "Key");
         }
 
         mapContex.put("package", repositoryPackage);
