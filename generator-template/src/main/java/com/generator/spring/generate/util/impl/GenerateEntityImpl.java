@@ -255,7 +255,7 @@ public class GenerateEntityImpl implements GenerateEntity {
                 .append("\n");
         sb.append("     ").append("private")
                 .append(" ")
-                .append(typeAttrEmbededId(className) + "Id")
+                .append(typeAttrEmbededId(className) + "Key")
                 .append(" ")
                 .append(nameAttrEmbededId(className))
                 .append(";");
